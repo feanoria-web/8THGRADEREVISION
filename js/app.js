@@ -1,11 +1,10 @@
 // ============================================
 // ESCAPE ROOM TOURNAMENT - MAIN APPLICATION
-// Enhanced with story scenes, true/false, and mini-games!
+// With reading passages and 3 bonus games!
 // ============================================
 
 class EscapeRoomGame {
     constructor() {
-        // Game state
         this.state = {
             teamName: 'Team Champions',
             playerCount: 2,
@@ -19,6 +18,7 @@ class EscapeRoomGame {
             incorrectAnswers: 0,
             firstTryCorrect: 0,
             trueFalseCorrect: 0,
+            bonusGamesPlayed: 0,
             roomScores: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
             questionsAnswered: [],
             isPlaying: false,
@@ -26,13 +26,16 @@ class EscapeRoomGame {
             startTime: null,
             showingIntro: false,
             showingMiniGame: false,
-            miniGameScore: 0
+            // Bonus game states
+            wordNinjaScore: 0,
+            wordNinjaTimer: null,
+            ticTacToeBoard: Array(9).fill(null),
+            ticTacToeQuestionIndex: 0,
+            speedTypingScore: 0,
+            speedTypingTimer: null,
+            speedTypingWordIndex: 0
         };
-
-        // DOM elements cache
         this.elements = {};
-
-        // Initialize
         this.init();
     }
 
@@ -44,7 +47,6 @@ class EscapeRoomGame {
     }
 
     cacheElements() {
-        // Screens
         this.elements.screens = {
             loading: document.getElementById('loading-screen'),
             home: document.getElementById('home-screen'),
@@ -54,32 +56,22 @@ class EscapeRoomGame {
             results: document.getElementById('results-screen'),
             leaderboard: document.getElementById('leaderboard-screen')
         };
-
-        // Home screen elements
         this.elements.teamNameInput = document.getElementById('team-name-input');
         this.elements.playerButtons = document.querySelectorAll('.player-btn');
         this.elements.startBtn = document.getElementById('start-btn');
         this.elements.beginBtn = document.getElementById('begin-btn');
-
-        // Game screen elements
         this.elements.displayTeamName = document.getElementById('display-team-name');
         this.elements.timer = document.getElementById('timer');
         this.elements.score = document.getElementById('score');
         this.elements.progressFill = document.getElementById('progress-fill');
         this.elements.progressRooms = document.querySelectorAll('.progress-room');
         this.elements.roomContainer = document.getElementById('room-container');
-
-        // Navigation buttons
         this.elements.backBtn = document.getElementById('back-btn');
         this.elements.hintBtn = document.getElementById('hint-btn');
         this.elements.forwardBtn = document.getElementById('forward-btn');
-
-        // Transition screen
         this.elements.transitionIcon = document.getElementById('transition-icon');
         this.elements.transitionTitle = document.getElementById('transition-title');
         this.elements.transitionMessage = document.getElementById('transition-message');
-
-        // Results screen
         this.elements.resultTeamName = document.getElementById('result-team-name');
         this.elements.finalScore = document.getElementById('final-score');
         this.elements.finalTime = document.getElementById('final-time');
@@ -88,12 +80,8 @@ class EscapeRoomGame {
         this.elements.medalDisplay = document.getElementById('medal-display');
         this.elements.playAgainBtn = document.getElementById('play-again-btn');
         this.elements.leaderboardBtn = document.getElementById('leaderboard-btn');
-
-        // Leaderboard
         this.elements.leaderboardList = document.getElementById('leaderboard-list');
         this.elements.backHomeBtn = document.getElementById('back-home-btn');
-
-        // Modals
         this.elements.hintModal = document.getElementById('hint-modal');
         this.elements.hintText = document.getElementById('hint-text');
         this.elements.closeHintBtn = document.getElementById('close-hint-btn');
@@ -102,17 +90,12 @@ class EscapeRoomGame {
         this.elements.feedbackTitle = document.getElementById('feedback-title');
         this.elements.feedbackText = document.getElementById('feedback-text');
         this.elements.pointsEarned = document.getElementById('points-earned');
-
-        // Confetti container
         this.elements.confetti = document.getElementById('confetti');
     }
 
     bindEvents() {
-        // Home screen
         this.elements.startBtn.addEventListener('click', () => this.showScreen('instructions'));
         this.elements.beginBtn.addEventListener('click', () => this.startGame());
-
-        // Player count buttons
         this.elements.playerButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 this.elements.playerButtons.forEach(b => b.classList.remove('selected'));
@@ -120,50 +103,28 @@ class EscapeRoomGame {
                 this.state.playerCount = parseInt(btn.dataset.players);
             });
         });
-
-        // Team name input
         this.elements.teamNameInput.addEventListener('input', (e) => {
             this.state.teamName = e.target.value || 'Team Champions';
         });
-
-        // Navigation buttons
         this.elements.backBtn.addEventListener('click', () => this.goBack());
         this.elements.hintBtn.addEventListener('click', () => this.showHint());
         this.elements.forwardBtn.addEventListener('click', () => this.goForward());
-
-        // Modal close
         this.elements.closeHintBtn.addEventListener('click', () => this.hideHint());
-
-        // Results screen
         this.elements.playAgainBtn.addEventListener('click', () => this.resetGame());
         this.elements.leaderboardBtn.addEventListener('click', () => this.showLeaderboard());
         this.elements.backHomeBtn.addEventListener('click', () => this.showScreen('home'));
-
-        // Keyboard shortcuts
         document.addEventListener('keydown', (e) => this.handleKeyboard(e));
     }
 
-    // ============================================
-    // SCREEN MANAGEMENT
-    // ============================================
-
     showScreen(screenName) {
-        Object.values(this.elements.screens).forEach(screen => {
-            screen.classList.remove('active');
-        });
+        Object.values(this.elements.screens).forEach(screen => screen.classList.remove('active'));
         this.elements.screens[screenName].classList.add('active');
     }
 
     showLoadingScreen() {
         this.showScreen('loading');
-        setTimeout(() => {
-            this.showScreen('home');
-        }, 2500);
+        setTimeout(() => this.showScreen('home'), 2500);
     }
-
-    // ============================================
-    // GAME FLOW
-    // ============================================
 
     startGame() {
         this.state.teamName = this.elements.teamNameInput.value || 'Team Champions';
@@ -174,19 +135,17 @@ class EscapeRoomGame {
         this.state.incorrectAnswers = 0;
         this.state.firstTryCorrect = 0;
         this.state.trueFalseCorrect = 0;
+        this.state.bonusGamesPlayed = 0;
         this.state.attempts = {};
         this.state.roomScores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
         this.state.questionsAnswered = [];
         this.state.timeRemaining = GAME_DATA.settings.totalTime;
         this.state.isPlaying = true;
         this.state.startTime = Date.now();
-        this.state.showingMiniGame = false;
-
         this.elements.displayTeamName.textContent = this.state.teamName;
         this.updateScore();
         this.updateTimer();
         this.updateProgress();
-
         this.showScreen('game');
         this.startTimer();
         this.showRoomIntro();
@@ -197,10 +156,7 @@ class EscapeRoomGame {
             if (!this.state.isPaused && this.state.isPlaying) {
                 this.state.timeRemaining--;
                 this.updateTimer();
-
-                if (this.state.timeRemaining <= 0) {
-                    this.endGame(false);
-                }
+                if (this.state.timeRemaining <= 0) this.endGame(false);
             }
         }, 1000);
     }
@@ -208,18 +164,11 @@ class EscapeRoomGame {
     updateTimer() {
         const minutes = Math.floor(this.state.timeRemaining / 60);
         const seconds = this.state.timeRemaining % 60;
-        this.elements.timer.textContent =
-            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-        // Timer warnings
+        this.elements.timer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         const timerDisplay = this.elements.timer.parentElement;
         timerDisplay.classList.remove('warning', 'danger');
-
-        if (this.state.timeRemaining <= 60) {
-            timerDisplay.classList.add('danger');
-        } else if (this.state.timeRemaining <= 180) {
-            timerDisplay.classList.add('warning');
-        }
+        if (this.state.timeRemaining <= 60) timerDisplay.classList.add('danger');
+        else if (this.state.timeRemaining <= 180) timerDisplay.classList.add('warning');
     }
 
     updateScore() {
@@ -231,47 +180,34 @@ class EscapeRoomGame {
         const answered = this.state.questionsAnswered.length;
         const percentage = (answered / totalQuestions) * 100;
         this.elements.progressFill.style.width = `${percentage}%`;
-
-        // Update room indicators
         this.elements.progressRooms.forEach((room, index) => {
             room.classList.remove('active', 'completed');
-            if (index + 1 < this.state.currentRoom) {
-                room.classList.add('completed');
-            } else if (index + 1 === this.state.currentRoom) {
-                room.classList.add('active');
-            }
+            if (index + 1 < this.state.currentRoom) room.classList.add('completed');
+            else if (index + 1 === this.state.currentRoom) room.classList.add('active');
         });
     }
 
     getTotalQuestions() {
         let total = 0;
         for (let i = 1; i <= 4; i++) {
-            // Count only non-story questions
-            total += GAME_DATA.questions[i].filter(q => q.type !== 'story').length;
+            total += GAME_DATA.questions[i].filter(q => q.type !== 'story' && q.type !== 'reading').length;
         }
         return total;
     }
 
-    // ============================================
-    // ROOM & QUESTION RENDERING
-    // ============================================
-
     showRoomIntro() {
         this.state.showingIntro = true;
         const room = GAME_DATA.rooms[this.state.currentRoom - 1];
-
-        const html = `
+        this.elements.roomContainer.innerHTML = `
             <div class="room-intro">
                 <div class="room-intro-icon">${room.icon}</div>
                 <h1 class="room-intro-title">${room.introTitle}</h1>
                 <p class="room-intro-desc">${room.introDesc}</p>
                 <button class="enter-room-btn" onclick="game.enterRoom()">
-                    <span>🚪</span> ENTER ROOM
+                    <span>🚪</span> ENTER
                 </button>
             </div>
         `;
-
-        this.elements.roomContainer.innerHTML = html;
         this.updateNavButtons();
     }
 
@@ -283,60 +219,50 @@ class EscapeRoomGame {
 
     renderQuestion() {
         const questions = GAME_DATA.questions[this.state.currentRoom];
-
         if (!questions || this.state.currentQuestion >= questions.length) {
             this.completeRoom();
             return;
         }
-
         const question = questions[this.state.currentQuestion];
         const room = GAME_DATA.rooms[this.state.currentRoom - 1];
-
         let contentHtml = '';
 
-        // Render based on question type
         switch (question.type) {
-            case 'story':
-                contentHtml = this.renderStoryScene(question, room);
-                break;
-            case 'true-false':
-                contentHtml = this.renderTrueFalseQuestion(question, room);
-                break;
-            case 'fill-blank':
-                contentHtml = this.renderFillBlankQuestion(question, room);
-                break;
-            case 'character-select':
-                contentHtml = this.renderCharacterQuestion(question, room);
-                break;
-            case 'comparison':
-                contentHtml = this.renderComparisonQuestion(question, room);
-                break;
-            case 'recipe':
-                contentHtml = this.renderRecipeQuestion(question, room);
-                break;
-            case 'phone':
-            case 'keypad':
-                contentHtml = this.renderPhoneQuestion(question, room);
-                break;
-            case 'bonus':
-                contentHtml = this.renderBonusQuestion(question, room);
-                break;
-            default:
-                contentHtml = this.renderDefaultQuestion(question, room);
+            case 'story': contentHtml = this.renderStoryScene(question, room); break;
+            case 'reading': contentHtml = this.renderReadingPassage(question, room); break;
+            case 'true-false': contentHtml = this.renderTrueFalseQuestion(question, room); break;
+            case 'fill-blank': contentHtml = this.renderFillBlankQuestion(question, room); break;
+            case 'character-select': contentHtml = this.renderCharacterQuestion(question, room); break;
+            case 'comparison': contentHtml = this.renderComparisonQuestion(question, room); break;
+            case 'recipe': contentHtml = this.renderRecipeQuestion(question, room); break;
+            case 'phone': case 'keypad': contentHtml = this.renderPhoneQuestion(question, room); break;
+            case 'bonus-game': contentHtml = this.renderBonusGame(question); break;
+            default: contentHtml = this.renderDefaultQuestion(question, room);
         }
-
         this.elements.roomContainer.innerHTML = contentHtml;
         this.updateNavButtons();
-
-        // Only bind option buttons for non-story questions
-        if (question.type !== 'story') {
+        if (question.type !== 'story' && question.type !== 'reading' && question.type !== 'bonus-game') {
             this.bindOptionButtons();
         }
     }
 
-    // ============================================
-    // NEW RENDERERS: Story, True/False, Fill-Blank
-    // ============================================
+    // READING PASSAGE RENDERER
+    renderReadingPassage(question, room) {
+        return `
+            <div class="question-card reading-card">
+                <div class="room-header">
+                    <span class="room-emoji">${room.icon}</span>
+                    <h2 class="room-title">${question.title}</h2>
+                </div>
+                <div class="reading-passage">
+                    <p>${question.passage}</p>
+                </div>
+                <button class="continue-story-btn" onclick="game.continueFromStory()">
+                    ${question.continueText}
+                </button>
+            </div>
+        `;
+    }
 
     renderStoryScene(question, room) {
         return `
@@ -345,11 +271,9 @@ class EscapeRoomGame {
                     <span class="room-emoji">${room.icon}</span>
                     <h2 class="room-title">${room.name}</h2>
                 </div>
-
                 <div class="story-container">
                     <h2 class="story-title">${question.title}</h2>
                     <p class="story-narrative">${question.narrative}</p>
-
                     <div class="story-character">
                         <div class="story-character-icon">${question.character.icon}</div>
                         <div class="story-character-content">
@@ -358,7 +282,6 @@ class EscapeRoomGame {
                         </div>
                     </div>
                 </div>
-
                 <button class="continue-story-btn" onclick="game.continueFromStory()">
                     ${question.continueText}
                 </button>
@@ -374,7 +297,6 @@ class EscapeRoomGame {
     renderTrueFalseQuestion(question, room) {
         const questionNumber = this.getActualQuestionNumber();
         const totalQuestions = this.getActualTotalInRoom();
-
         return `
             <div class="question-card true-false-card">
                 <div class="room-header">
@@ -382,13 +304,10 @@ class EscapeRoomGame {
                     <h2 class="room-title">${room.name}</h2>
                     <p class="room-subtitle">Question ${questionNumber} of ${totalQuestions}</p>
                 </div>
-
                 <div class="true-false-badge">TRUE or FALSE?</div>
-
                 <div class="statement-box">
                     <p class="statement-text">"${question.statement}"</p>
                 </div>
-
                 <div class="options-container true-false-options">
                     <button class="option-btn true-btn" data-answer="true" data-correct="${question.correctAnswer === true}">
                         <span class="option-icon">✓</span>
@@ -406,7 +325,6 @@ class EscapeRoomGame {
     renderFillBlankQuestion(question, room) {
         const questionNumber = this.getActualQuestionNumber();
         const totalQuestions = this.getActualTotalInRoom();
-
         return `
             <div class="question-card fill-blank-card">
                 <div class="room-header">
@@ -414,18 +332,9 @@ class EscapeRoomGame {
                     <h2 class="room-title">${room.name}</h2>
                     <p class="room-subtitle">Question ${questionNumber} of ${totalQuestions}</p>
                 </div>
-
-                <div class="context-box">
-                    <p class="context-text">${question.context}</p>
-                </div>
-
-                <div class="sentence-box">
-                    <p class="sentence-text">"${question.sentence}"</p>
-                </div>
-
-                <div class="options-container">
-                    ${this.renderOptions(question.options)}
-                </div>
+                <div class="context-box"><p class="context-text">${question.context}</p></div>
+                <div class="sentence-box"><p class="sentence-text">"${question.sentence}"</p></div>
+                <div class="options-container">${this.renderOptions(question.options)}</div>
             </div>
         `;
     }
@@ -434,22 +343,19 @@ class EscapeRoomGame {
         const questions = GAME_DATA.questions[this.state.currentRoom];
         let count = 0;
         for (let i = 0; i <= this.state.currentQuestion; i++) {
-            if (questions[i].type !== 'story') {
-                count++;
-            }
+            if (questions[i].type !== 'story' && questions[i].type !== 'reading') count++;
         }
         return count;
     }
 
     getActualTotalInRoom() {
         const questions = GAME_DATA.questions[this.state.currentRoom];
-        return questions.filter(q => q.type !== 'story').length;
+        return questions.filter(q => q.type !== 'story' && q.type !== 'reading' && q.type !== 'bonus-game').length;
     }
 
     renderCharacterQuestion(question, room) {
         const questionNumber = this.getActualQuestionNumber();
         const totalQuestions = this.getActualTotalInRoom();
-
         return `
             <div class="question-card">
                 <div class="room-header">
@@ -457,18 +363,13 @@ class EscapeRoomGame {
                     <h2 class="room-title">${room.name}</h2>
                     <p class="room-subtitle">Question ${questionNumber} of ${totalQuestions}</p>
                 </div>
-
                 <div class="character-display">
                     <div class="character-icon">${question.character.icon}</div>
                     <h3 class="character-name">${question.character.name}</h3>
                     <p class="character-desc">"${question.character.description}"</p>
                 </div>
-
                 <div class="question-text">${question.question}</div>
-
-                <div class="options-container">
-                    ${this.renderOptions(question.options)}
-                </div>
+                <div class="options-container">${this.renderOptions(question.options)}</div>
             </div>
         `;
     }
@@ -476,7 +377,6 @@ class EscapeRoomGame {
     renderComparisonQuestion(question, room) {
         const questionNumber = this.getActualQuestionNumber();
         const totalQuestions = this.getActualTotalInRoom();
-
         return `
             <div class="question-card">
                 <div class="room-header">
@@ -484,7 +384,6 @@ class EscapeRoomGame {
                     <h2 class="room-title">${room.name}</h2>
                     <p class="room-subtitle">Question ${questionNumber} of ${totalQuestions}</p>
                 </div>
-
                 <div class="comparison-display">
                     <div class="comparison-item">
                         <div class="comparison-icon">${question.comparison.item1.icon}</div>
@@ -496,12 +395,8 @@ class EscapeRoomGame {
                         <div class="comparison-label">${question.comparison.item2.label}</div>
                     </div>
                 </div>
-
                 <div class="question-text">${question.question}</div>
-
-                <div class="options-container">
-                    ${this.renderOptions(question.options)}
-                </div>
+                <div class="options-container">${this.renderOptions(question.options)}</div>
             </div>
         `;
     }
@@ -509,7 +404,6 @@ class EscapeRoomGame {
     renderRecipeQuestion(question, room) {
         const questionNumber = this.getActualQuestionNumber();
         const totalQuestions = this.getActualTotalInRoom();
-
         return `
             <div class="question-card">
                 <div class="room-header">
@@ -517,18 +411,13 @@ class EscapeRoomGame {
                     <h2 class="room-title">${room.name}</h2>
                     <p class="room-subtitle">Question ${questionNumber} of ${totalQuestions}</p>
                 </div>
-
                 <div class="recipe-display">
-                    <div class="recipe-title">📜 Recipe for Success</div>
+                    <div class="recipe-title">📜 Recipe</div>
                     <div class="recipe-step">${question.recipeStep}</div>
                     ${question.displayImage ? `<div class="recipe-image">${question.displayImage}</div>` : ''}
                 </div>
-
                 <div class="question-text">${question.question}</div>
-
-                <div class="options-container">
-                    ${this.renderOptions(question.options)}
-                </div>
+                <div class="options-container">${this.renderOptions(question.options)}</div>
             </div>
         `;
     }
@@ -536,7 +425,6 @@ class EscapeRoomGame {
     renderPhoneQuestion(question, room) {
         const questionNumber = this.getActualQuestionNumber();
         const totalQuestions = this.getActualTotalInRoom();
-
         return `
             <div class="question-card">
                 <div class="room-header">
@@ -544,41 +432,15 @@ class EscapeRoomGame {
                     <h2 class="room-title">${room.name}</h2>
                     <p class="room-subtitle">Question ${questionNumber} of ${totalQuestions}</p>
                 </div>
-
                 <div class="phone-display">
                     <div class="phone-screen">
-                        <div class="phone-icon">${question.phoneDisplay.includes('INCOMING') ? '📞' : question.phoneDisplay.includes('CODE') ? '🔢' : '🎧'}</div>
+                        <div class="phone-icon">📞</div>
                         <div class="phone-text">${question.phoneDisplay}</div>
                         <div class="phone-action">${question.phoneAction}</div>
                     </div>
                 </div>
-
                 <div class="question-text">${question.question}</div>
-
-                <div class="options-container">
-                    ${this.renderOptions(question.options)}
-                </div>
-            </div>
-        `;
-    }
-
-    renderBonusQuestion(question, room) {
-        const questionNumber = this.getActualQuestionNumber();
-        const totalQuestions = this.getActualTotalInRoom();
-
-        return `
-            <div class="question-card bonus-card">
-                <div class="room-header">
-                    <span class="room-emoji">${question.icon}</span>
-                    <h2 class="room-title">BONUS: ${question.category}</h2>
-                    <p class="room-subtitle">Bonus Question ${questionNumber} of ${totalQuestions}</p>
-                </div>
-
-                <div class="question-text">${question.question}</div>
-
-                <div class="options-container">
-                    ${this.renderOptions(question.options)}
-                </div>
+                <div class="options-container">${this.renderOptions(question.options)}</div>
             </div>
         `;
     }
@@ -586,7 +448,6 @@ class EscapeRoomGame {
     renderDefaultQuestion(question, room) {
         const questionNumber = this.getActualQuestionNumber();
         const totalQuestions = this.getActualTotalInRoom();
-
         return `
             <div class="question-card">
                 <div class="room-header">
@@ -594,12 +455,8 @@ class EscapeRoomGame {
                     <h2 class="room-title">${room.name}</h2>
                     <p class="room-subtitle">Question ${questionNumber} of ${totalQuestions}</p>
                 </div>
-
                 <div class="question-text">${question.question}</div>
-
-                <div class="options-container">
-                    ${this.renderOptions(question.options)}
-                </div>
+                <div class="options-container">${this.renderOptions(question.options)}</div>
             </div>
         `;
     }
@@ -615,40 +472,313 @@ class EscapeRoomGame {
 
     bindOptionButtons() {
         const buttons = document.querySelectorAll('.option-btn');
-        buttons.forEach(btn => {
-            btn.addEventListener('click', () => this.selectOption(btn));
-        });
+        buttons.forEach(btn => btn.addEventListener('click', () => this.selectOption(btn)));
     }
 
     // ============================================
-    // MINI-GAMES
+    // BONUS GAMES
+    // ============================================
+
+    renderBonusGame(question) {
+        const gameType = question.gameType;
+        const gameData = GAME_DATA.bonusGames[gameType];
+
+        switch (gameType) {
+            case 'wordCatcher': return this.renderWordNinja(gameData);
+            case 'ticTacToe': return this.renderTicTacToe(gameData);
+            case 'speedTyping': return this.renderSpeedTyping(gameData);
+            default: return '<p>Unknown game</p>';
+        }
+    }
+
+    // GAME 1: WORD NINJA
+    renderWordNinja(gameData) {
+        this.state.wordNinjaScore = 0;
+        return `
+            <div class="bonus-game-card word-ninja-game">
+                <h2 class="bonus-game-title">${gameData.title}</h2>
+                <p class="bonus-game-instruction">${gameData.instruction}</p>
+                <div class="word-ninja-stats">
+                    <span class="ninja-score">Score: <strong id="ninja-score">0</strong> / 10</span>
+                    <span class="ninja-timer">Time: <strong id="ninja-timer">60</strong>s</span>
+                </div>
+                <div class="word-ninja-arena" id="ninja-arena"></div>
+                <button class="bonus-game-start" onclick="game.startWordNinja()">START GAME!</button>
+            </div>
+        `;
+    }
+
+    startWordNinja() {
+        const gameData = GAME_DATA.bonusGames.wordCatcher;
+        this.state.wordNinjaScore = 0;
+        let timeLeft = gameData.timeLimit;
+        const arena = document.getElementById('ninja-arena');
+        const scoreEl = document.getElementById('ninja-score');
+        const timerEl = document.getElementById('ninja-timer');
+        document.querySelector('.bonus-game-start').style.display = 'none';
+
+        // Spawn words
+        const spawnWord = () => {
+            if (this.state.wordNinjaScore >= 10 || timeLeft <= 0) return;
+
+            const isBomb = Math.random() < 0.25;
+            const word = document.createElement('div');
+            word.className = isBomb ? 'falling-item bomb' : 'falling-item word';
+            word.textContent = isBomb ? '💣' : gameData.words[Math.floor(Math.random() * gameData.words.length)];
+            word.style.left = Math.random() * 80 + 10 + '%';
+            word.style.animationDuration = (3 + Math.random() * 2) + 's';
+
+            word.addEventListener('click', () => {
+                if (isBomb) {
+                    this.state.wordNinjaScore = Math.max(0, this.state.wordNinjaScore - 2);
+                    word.classList.add('exploded');
+                } else {
+                    this.state.wordNinjaScore++;
+                    word.classList.add('caught');
+                }
+                scoreEl.textContent = this.state.wordNinjaScore;
+                setTimeout(() => word.remove(), 300);
+
+                if (this.state.wordNinjaScore >= 10) {
+                    clearInterval(this.state.wordNinjaTimer);
+                    this.endWordNinja(true, timeLeft);
+                }
+            });
+
+            arena.appendChild(word);
+            setTimeout(() => { if (word.parentNode) word.remove(); }, 5000);
+        };
+
+        const spawnInterval = setInterval(spawnWord, 800);
+
+        this.state.wordNinjaTimer = setInterval(() => {
+            timeLeft--;
+            timerEl.textContent = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(this.state.wordNinjaTimer);
+                clearInterval(spawnInterval);
+                this.endWordNinja(this.state.wordNinjaScore >= 10, timeLeft);
+            }
+        }, 1000);
+    }
+
+    endWordNinja(won, timeLeft) {
+        const arena = document.getElementById('ninja-arena');
+        arena.innerHTML = won
+            ? `<div class="game-result win">🎉 YOU WIN! Score: ${this.state.wordNinjaScore}</div>`
+            : `<div class="game-result lose">Time's up! Score: ${this.state.wordNinjaScore}/10</div>`;
+
+        const points = won ? 50 : this.state.wordNinjaScore * 5;
+        this.state.score += points;
+        this.state.bonusGamesPlayed++;
+        this.updateScore();
+
+        setTimeout(() => {
+            this.state.currentQuestion++;
+            this.renderQuestion();
+        }, 2500);
+    }
+
+    // GAME 2: TIC-TAC-TOE
+    renderTicTacToe(gameData) {
+        this.state.ticTacToeBoard = Array(9).fill(null);
+        this.state.ticTacToeQuestionIndex = 0;
+        return `
+            <div class="bonus-game-card tictactoe-game">
+                <h2 class="bonus-game-title">${gameData.title}</h2>
+                <p class="bonus-game-instruction">${gameData.instruction}</p>
+                <div class="ttt-container">
+                    <div class="ttt-board" id="ttt-board">
+                        ${Array(9).fill('').map((_, i) => `<div class="ttt-cell" data-index="${i}" onclick="game.selectTTTCell(${i})"></div>`).join('')}
+                    </div>
+                </div>
+                <div class="ttt-question" id="ttt-question">Click any cell to start!</div>
+            </div>
+        `;
+    }
+
+    selectTTTCell(index) {
+        if (this.state.ticTacToeBoard[index]) return;
+
+        const gameData = GAME_DATA.bonusGames.ticTacToe;
+        const questionData = gameData.questions[this.state.ticTacToeQuestionIndex % gameData.questions.length];
+        const questionEl = document.getElementById('ttt-question');
+
+        questionEl.innerHTML = `
+            <p><strong>${questionData.q}</strong></p>
+            <div class="ttt-options">
+                <button onclick="game.answerTTT(${index}, true)">${questionData.a}</button>
+                <button onclick="game.answerTTT(${index}, false)">${questionData.wrong}</button>
+            </div>
+        `;
+    }
+
+    answerTTT(index, correct) {
+        const board = this.state.ticTacToeBoard;
+        const cell = document.querySelector(`.ttt-cell[data-index="${index}"]`);
+
+        if (correct) {
+            board[index] = 'X';
+            cell.textContent = '❌';
+            cell.classList.add('x');
+        } else {
+            board[index] = 'O';
+            cell.textContent = '⭕';
+            cell.classList.add('o');
+        }
+
+        this.state.ticTacToeQuestionIndex++;
+
+        const winner = this.checkTTTWinner();
+        if (winner) {
+            this.endTicTacToe(winner);
+        } else if (board.every(cell => cell !== null)) {
+            this.endTicTacToe('draw');
+        } else {
+            document.getElementById('ttt-question').textContent = 'Click another cell!';
+            // AI move for O (simple random)
+            if (!correct) {
+                const emptyCells = board.map((v, i) => v === null ? i : -1).filter(i => i !== -1);
+                if (emptyCells.length > 0) {
+                    setTimeout(() => {
+                        const aiMove = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                        if (board[aiMove] === null) {
+                            board[aiMove] = 'O';
+                            document.querySelector(`.ttt-cell[data-index="${aiMove}"]`).textContent = '⭕';
+                            document.querySelector(`.ttt-cell[data-index="${aiMove}"]`).classList.add('o');
+                        }
+                    }, 500);
+                }
+            }
+        }
+    }
+
+    checkTTTWinner() {
+        const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+        const board = this.state.ticTacToeBoard;
+        for (const [a,b,c] of lines) {
+            if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                return board[a];
+            }
+        }
+        return null;
+    }
+
+    endTicTacToe(result) {
+        const questionEl = document.getElementById('ttt-question');
+        let points = 0;
+        if (result === 'X') {
+            questionEl.innerHTML = '<div class="game-result win">🎉 YOU WIN!</div>';
+            points = 50;
+        } else if (result === 'O') {
+            questionEl.innerHTML = '<div class="game-result lose">❌ You lost!</div>';
+            points = 10;
+        } else {
+            questionEl.innerHTML = '<div class="game-result">🤝 Draw!</div>';
+            points = 25;
+        }
+
+        this.state.score += points;
+        this.state.bonusGamesPlayed++;
+        this.updateScore();
+
+        setTimeout(() => {
+            this.state.currentQuestion++;
+            this.renderQuestion();
+        }, 2500);
+    }
+
+    // GAME 3: SPEED TYPING
+    renderSpeedTyping(gameData) {
+        this.state.speedTypingScore = 0;
+        this.state.speedTypingWordIndex = 0;
+        return `
+            <div class="bonus-game-card speed-typing-game">
+                <h2 class="bonus-game-title">${gameData.title}</h2>
+                <p class="bonus-game-instruction">${gameData.instruction}</p>
+                <div class="typing-stats">
+                    <span>Words: <strong id="typing-score">0</strong></span>
+                    <span>Time: <strong id="typing-timer">30</strong>s</span>
+                </div>
+                <div class="typing-word" id="typing-word">Click Start!</div>
+                <input type="text" id="typing-input" class="typing-input" placeholder="Type here..." disabled autocomplete="off">
+                <button class="bonus-game-start" onclick="game.startSpeedTyping()">START!</button>
+            </div>
+        `;
+    }
+
+    startSpeedTyping() {
+        const gameData = GAME_DATA.bonusGames.speedTyping;
+        let timeLeft = gameData.timeLimit;
+        this.state.speedTypingScore = 0;
+        this.state.speedTypingWordIndex = 0;
+
+        const wordEl = document.getElementById('typing-word');
+        const inputEl = document.getElementById('typing-input');
+        const timerEl = document.getElementById('typing-timer');
+        const scoreEl = document.getElementById('typing-score');
+
+        document.querySelector('.bonus-game-start').style.display = 'none';
+        inputEl.disabled = false;
+        inputEl.focus();
+
+        const showNextWord = () => {
+            wordEl.textContent = gameData.words[this.state.speedTypingWordIndex % gameData.words.length];
+            inputEl.value = '';
+        };
+
+        showNextWord();
+
+        inputEl.addEventListener('input', () => {
+            if (inputEl.value.toLowerCase().trim() === wordEl.textContent.toLowerCase()) {
+                this.state.speedTypingScore++;
+                this.state.speedTypingWordIndex++;
+                scoreEl.textContent = this.state.speedTypingScore;
+                showNextWord();
+            }
+        });
+
+        this.state.speedTypingTimer = setInterval(() => {
+            timeLeft--;
+            timerEl.textContent = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(this.state.speedTypingTimer);
+                inputEl.disabled = true;
+                this.endSpeedTyping();
+            }
+        }, 1000);
+    }
+
+    endSpeedTyping() {
+        const wordEl = document.getElementById('typing-word');
+        const points = this.state.speedTypingScore * 5;
+        wordEl.innerHTML = `<div class="game-result win">Done! ${this.state.speedTypingScore} words = ${points} pts</div>`;
+
+        this.state.score += points;
+        this.state.bonusGamesPlayed++;
+        this.updateScore();
+
+        setTimeout(() => {
+            this.state.currentQuestion++;
+            this.renderQuestion();
+        }, 2500);
+    }
+
+    // ============================================
+    // MINI-GAMES BETWEEN UNITS
     // ============================================
 
     showMiniGame(roomNumber) {
         const miniGame = GAME_DATA.miniGames[roomNumber];
-        if (!miniGame) {
-            this.proceedToNextRoom();
-            return;
-        }
-
+        if (!miniGame) { this.proceedToNextRoom(); return; }
         this.state.showingMiniGame = true;
         let html = '';
-
         switch (miniGame.type) {
-            case 'word-scramble':
-                html = this.renderWordScramble(miniGame);
-                break;
-            case 'emoji-match':
-                html = this.renderEmojiMatch(miniGame);
-                break;
-            case 'quick-sort':
-                html = this.renderQuickSort(miniGame);
-                break;
-            default:
-                this.proceedToNextRoom();
-                return;
+            case 'word-scramble': html = this.renderWordScramble(miniGame); break;
+            case 'emoji-match': html = this.renderEmojiMatch(miniGame); break;
+            case 'quick-sort': html = this.renderQuickSort(miniGame); break;
+            default: this.proceedToNextRoom(); return;
         }
-
         this.elements.roomContainer.innerHTML = html;
     }
 
@@ -658,22 +788,13 @@ class EscapeRoomGame {
             <div class="mini-game-card">
                 <h2 class="mini-game-title">${miniGame.title}</h2>
                 <p class="mini-game-instruction">${miniGame.instruction}</p>
-
                 <div class="scrambled-letters">
                     ${letters.split('').map(l => `<span class="scramble-letter">${l}</span>`).join('')}
                 </div>
-
-                <input type="text" id="scramble-answer" class="scramble-input" placeholder="Type your answer..." maxlength="10" autocomplete="off">
-
-                <p class="mini-game-hint">💡 Hint: ${miniGame.hint}</p>
-
-                <button class="mini-game-submit" onclick="game.checkWordScramble('${miniGame.answer}', ${miniGame.points})">
-                    CHECK ANSWER
-                </button>
-
-                <button class="mini-game-skip" onclick="game.skipMiniGame()">
-                    Skip Game →
-                </button>
+                <input type="text" id="scramble-answer" class="scramble-input" placeholder="Type answer..." maxlength="10" autocomplete="off">
+                <p class="mini-game-hint">💡 ${miniGame.hint}</p>
+                <button class="mini-game-submit" onclick="game.checkWordScramble('${miniGame.answer}', ${miniGame.points})">CHECK</button>
+                <button class="mini-game-skip" onclick="game.skipMiniGame()">Skip →</button>
             </div>
         `;
     }
@@ -683,131 +804,83 @@ class EscapeRoomGame {
         if (userAnswer === answer) {
             this.state.score += points;
             this.updateScore();
-            this.showFeedback(true, `Correct! The word was ${answer}!`, points);
+            this.showFeedback(true, `Correct! ${answer}!`, points);
             setTimeout(() => this.proceedToNextRoom(), 2000);
         } else {
-            this.showFeedback(false, `Not quite! Try again or skip.`, 0);
+            this.showFeedback(false, 'Try again!', 0);
         }
     }
 
     renderEmojiMatch(miniGame) {
-        const shuffledWords = [...miniGame.pairs].sort(() => Math.random() - 0.5);
         return `
             <div class="mini-game-card">
                 <h2 class="mini-game-title">${miniGame.title}</h2>
                 <p class="mini-game-instruction">${miniGame.instruction}</p>
-
                 <div class="emoji-match-container">
-                    <div class="emoji-column">
-                        ${miniGame.pairs.map((p, i) => `
-                            <div class="emoji-item" data-emoji="${i}">${p.emoji}</div>
-                        `).join('')}
-                    </div>
-                    <div class="word-column">
-                        ${shuffledWords.map((p, i) => `
-                            <button class="word-item" onclick="game.selectEmojiWord(this, '${p.word}')">${p.word}</button>
-                        `).join('')}
-                    </div>
+                    ${miniGame.pairs.map((p, i) => `
+                        <button class="word-item" onclick="game.matchEmoji(this)">${p.emoji} ${p.word}</button>
+                    `).join('')}
                 </div>
-
-                <button class="mini-game-skip" onclick="game.skipMiniGame()">
-                    Skip Game →
-                </button>
+                <button class="mini-game-skip" onclick="game.skipMiniGame()">Skip →</button>
             </div>
         `;
     }
 
-    selectEmojiWord(button, word) {
-        document.querySelectorAll('.word-item').forEach(b => b.classList.remove('selected'));
-        button.classList.add('selected');
-
-        // Simple auto-check: if all correct, proceed
-        const pairs = GAME_DATA.miniGames[this.state.currentRoom].pairs;
-        const selectedWord = word;
-
-        // Mark as matched
+    matchEmoji(button) {
         button.classList.add('matched');
         button.disabled = true;
-
-        const matchedCount = document.querySelectorAll('.word-item.matched').length;
-        if (matchedCount >= pairs.length) {
+        const matched = document.querySelectorAll('.word-item.matched').length;
+        if (matched >= 3) {
             this.state.score += 15;
             this.updateScore();
-            this.showFeedback(true, 'All matched correctly!', 15);
+            this.showFeedback(true, 'All matched!', 15);
             setTimeout(() => this.proceedToNextRoom(), 2000);
         }
     }
 
     renderQuickSort(miniGame) {
-        const shuffledItems = [...miniGame.items].map((item, i) => ({item, origIndex: i})).sort(() => Math.random() - 0.5);
+        const shuffled = [...miniGame.items].map((item, i) => ({item, origIndex: i})).sort(() => Math.random() - 0.5);
         return `
             <div class="mini-game-card">
                 <h2 class="mini-game-title">${miniGame.title}</h2>
                 <p class="mini-game-instruction">${miniGame.instruction}</p>
-
                 <div class="sort-container" id="sort-container">
-                    ${shuffledItems.map(({item, origIndex}) => `
-                        <button class="sort-item" data-index="${origIndex}" onclick="game.selectSortItem(this)">
-                            ${item}
-                        </button>
+                    ${shuffled.map(({item, origIndex}) => `
+                        <button class="sort-item" data-index="${origIndex}" onclick="game.selectSortItem(this)">${item}</button>
                     `).join('')}
                 </div>
-
-                <div class="sort-answer" id="sort-answer">
-                    <p>Your order: <span id="sort-order">Click items in order!</span></p>
-                </div>
-
-                <button class="mini-game-submit" onclick="game.checkSortOrder()">
-                    CHECK ORDER
-                </button>
-
-                <button class="mini-game-skip" onclick="game.skipMiniGame()">
-                    Skip Game →
-                </button>
+                <button class="mini-game-submit" onclick="game.checkSortOrder()">CHECK</button>
+                <button class="mini-game-skip" onclick="game.skipMiniGame()">Skip →</button>
             </div>
         `;
     }
 
     selectSortItem(button) {
         if (button.classList.contains('selected')) return;
-
         button.classList.add('selected');
-        const index = button.dataset.index;
-
         if (!this.sortOrder) this.sortOrder = [];
-        this.sortOrder.push(parseInt(index));
-
-        const orderDisplay = document.getElementById('sort-order');
-        orderDisplay.textContent = this.sortOrder.length + ' selected';
+        this.sortOrder.push(parseInt(button.dataset.index));
     }
 
     checkSortOrder() {
         const miniGame = GAME_DATA.miniGames[this.state.currentRoom];
-        const correct = miniGame.correctOrder;
-
-        if (!this.sortOrder || this.sortOrder.length !== correct.length) {
-            this.showFeedback(false, 'Select all items in order!', 0);
+        if (!this.sortOrder || this.sortOrder.length !== miniGame.correctOrder.length) {
+            this.showFeedback(false, 'Select all items!', 0);
             return;
         }
-
-        const isCorrect = this.sortOrder.every((val, idx) => val === correct[idx]);
-
-        if (isCorrect) {
+        if (this.sortOrder.every((val, idx) => val === miniGame.correctOrder[idx])) {
             this.state.score += miniGame.points;
             this.updateScore();
             this.showFeedback(true, 'Perfect order!', miniGame.points);
             setTimeout(() => this.proceedToNextRoom(), 2000);
         } else {
-            this.showFeedback(false, 'Not quite right! Try again.', 0);
+            this.showFeedback(false, 'Wrong order!', 0);
             this.sortOrder = [];
             document.querySelectorAll('.sort-item').forEach(btn => btn.classList.remove('selected'));
-            document.getElementById('sort-order').textContent = 'Click items in order!';
         }
     }
 
-    skipMiniGame() {
-        this.proceedToNextRoom();
-    }
+    skipMiniGame() { this.proceedToNextRoom(); }
 
     proceedToNextRoom() {
         this.state.showingMiniGame = false;
@@ -827,83 +900,47 @@ class EscapeRoomGame {
         const questionKey = `${this.state.currentRoom}-${this.state.currentQuestion}`;
         const isCorrect = button.dataset.correct === 'true';
 
-        // Track attempts
-        if (!this.state.attempts[questionKey]) {
-            this.state.attempts[questionKey] = 0;
-        }
+        if (!this.state.attempts[questionKey]) this.state.attempts[questionKey] = 0;
         this.state.attempts[questionKey]++;
 
-        // Disable all buttons
-        document.querySelectorAll('.option-btn').forEach(btn => {
-            btn.disabled = true;
-        });
+        document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
 
         if (isCorrect) {
-            // Calculate points
             let points = 0;
             const attempt = this.state.attempts[questionKey];
-            if (attempt === 1) {
-                points = GAME_DATA.settings.pointsFirstTry;
-                this.state.firstTryCorrect++;
-            } else if (attempt === 2) {
-                points = GAME_DATA.settings.pointsSecondTry;
-            } else {
-                points = GAME_DATA.settings.pointsThirdTry;
-            }
+            if (attempt === 1) { points = 10; this.state.firstTryCorrect++; }
+            else if (attempt === 2) points = 5;
+            else points = 2;
 
             this.state.score += points;
             this.state.correctAnswers++;
             this.state.roomScores[this.state.currentRoom]++;
+            if (question.type === 'true-false') this.state.trueFalseCorrect++;
 
-            // Track true/false correct answers
-            if (question.type === 'true-false') {
-                this.state.trueFalseCorrect++;
-            }
-
-            // Visual feedback
             button.classList.add('correct');
-
-            // Get feedback text
-            let feedbackText = question.correctFeedback || 'Correct!';
-            if (question.type === 'true-false' && question.explanation) {
-                feedbackText = question.explanation;
-            }
-
+            let feedbackText = question.correctFeedback || question.explanation || 'Correct!';
             this.showFeedback(true, feedbackText, points);
 
-            // Record answered question
             if (!this.state.questionsAnswered.includes(questionKey)) {
                 this.state.questionsAnswered.push(questionKey);
             }
 
-            // Auto-advance after delay
-            setTimeout(() => {
-                this.nextQuestion();
-            }, GAME_DATA.settings.autoAdvanceDelay);
+            setTimeout(() => this.nextQuestion(), GAME_DATA.settings.autoAdvanceDelay);
         } else {
             this.state.incorrectAnswers++;
             button.classList.add('incorrect');
-
             let feedbackText = question.incorrectFeedback || 'Try again!';
-            if (question.type === 'true-false' && question.explanation) {
-                feedbackText = `Not quite! ${question.explanation}`;
-            }
-
             this.showFeedback(false, feedbackText, 0);
 
-            // Re-enable other buttons after delay for retry
             setTimeout(() => {
                 document.querySelectorAll('.option-btn').forEach(btn => {
-                    if (!btn.classList.contains('incorrect')) {
-                        btn.disabled = false;
-                    }
+                    if (!btn.classList.contains('incorrect')) btn.disabled = false;
                 });
             }, GAME_DATA.settings.feedbackDuration);
         }
 
         this.updateScore();
         this.updateProgress();
-        this.saveProgress();
     }
 
     showFeedback(isCorrect, message, points) {
@@ -913,18 +950,13 @@ class EscapeRoomGame {
         this.elements.feedbackText.textContent = message;
         this.elements.pointsEarned.textContent = isCorrect ? `+${points} pts` : '';
         this.elements.pointsEarned.style.display = isCorrect ? 'block' : 'none';
-
         this.elements.feedbackModal.classList.add('active');
-
-        setTimeout(() => {
-            this.elements.feedbackModal.classList.remove('active');
-        }, GAME_DATA.settings.feedbackDuration);
+        setTimeout(() => this.elements.feedbackModal.classList.remove('active'), GAME_DATA.settings.feedbackDuration);
     }
 
     nextQuestion() {
         this.state.currentQuestion++;
         const questions = GAME_DATA.questions[this.state.currentRoom];
-
         if (this.state.currentQuestion >= questions.length) {
             this.completeRoom();
         } else {
@@ -932,22 +964,14 @@ class EscapeRoomGame {
         }
     }
 
-    // ============================================
-    // ROOM COMPLETION
-    // ============================================
-
     completeRoom() {
         const room = GAME_DATA.rooms[this.state.currentRoom - 1];
-
-        // Show transition screen
         this.elements.transitionIcon.textContent = '🔓';
         this.elements.transitionTitle.textContent = room.completionMessage;
         this.elements.transitionMessage.textContent = room.completionDesc;
-
         this.showScreen('transition');
 
         setTimeout(() => {
-            // Check if there's a mini-game for this room
             if (this.state.currentRoom < 4 && GAME_DATA.miniGames[this.state.currentRoom]) {
                 this.showScreen('game');
                 this.showMiniGame(this.state.currentRoom);
@@ -956,7 +980,6 @@ class EscapeRoomGame {
                 this.showScreen('game');
                 this.showRoomIntro();
             } else if (this.state.currentRoom === 4) {
-                // Offer bonus round
                 this.offerBonusRound();
             } else {
                 this.endGame(true);
@@ -965,18 +988,17 @@ class EscapeRoomGame {
     }
 
     offerBonusRound() {
-        this.elements.transitionIcon.textContent = '⭐';
-        this.elements.transitionTitle.textContent = 'BONUS ROUND AVAILABLE!';
+        this.elements.transitionIcon.textContent = '🎮';
+        this.elements.transitionTitle.textContent = 'BONUS GAMES!';
         this.elements.transitionMessage.innerHTML = `
-            You escaped! But can you earn bonus points?<br><br>
+            Play 3 fun games for bonus points!<br><br>
             <button class="big-button" onclick="game.startBonusRound()" style="margin: 10px;">
-                <span class="btn-icon">⭐</span> BONUS CHALLENGES
+                <span class="btn-icon">🎮</span> PLAY GAMES
             </button>
             <button class="big-button secondary" onclick="game.endGame(true)" style="margin: 10px;">
-                <span class="btn-icon">🏆</span> FINISH GAME
+                <span class="btn-icon">🏆</span> FINISH
             </button>
         `;
-
         this.showScreen('transition');
     }
 
@@ -986,10 +1008,6 @@ class EscapeRoomGame {
         this.showRoomIntro();
     }
 
-    // ============================================
-    // GAME END
-    // ============================================
-
     endGame(completed) {
         this.state.isPlaying = false;
         clearInterval(this.state.timerInterval);
@@ -998,7 +1016,6 @@ class EscapeRoomGame {
         const minutes = Math.floor(timeUsed / 60);
         const seconds = timeUsed % 60;
 
-        // Calculate stats for achievements
         const stats = {
             unit1Correct: this.state.roomScores[1],
             unit2Correct: this.state.roomScores[2],
@@ -1008,30 +1025,23 @@ class EscapeRoomGame {
             timeRemaining: this.state.timeRemaining,
             firstTryCorrect: this.state.firstTryCorrect,
             totalQuestions: this.state.questionsAnswered.length,
-            totalIncorrect: this.state.incorrectAnswers,
             trueFalseCorrect: this.state.trueFalseCorrect,
+            bonusGamesPlayed: this.state.bonusGamesPlayed,
+            readingCorrect: this.state.trueFalseCorrect,
             completed: completed
         };
 
-        // Update results screen
         this.elements.resultTeamName.textContent = this.state.teamName;
         this.elements.finalScore.textContent = this.state.score;
-        this.elements.finalTime.textContent =
-            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        this.elements.finalTime.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         this.elements.finalCorrect.textContent = this.state.correctAnswers;
 
-        // Determine medal
         let medal = '🏆';
-        if (this.state.score >= 250) {
-            medal = '🥇';
-        } else if (this.state.score >= 180) {
-            medal = '🥈';
-        } else if (this.state.score >= 120) {
-            medal = '🥉';
-        }
+        if (this.state.score >= 250) medal = '🥇';
+        else if (this.state.score >= 180) medal = '🥈';
+        else if (this.state.score >= 120) medal = '🥉';
         this.elements.medalDisplay.textContent = medal;
 
-        // Calculate achievements
         const earnedAchievements = GAME_DATA.achievements.filter(a => a.condition(stats));
         this.elements.achievementsList.innerHTML = earnedAchievements.map(a => `
             <div class="achievement">
@@ -1040,35 +1050,19 @@ class EscapeRoomGame {
             </div>
         `).join('');
 
-        // Save to leaderboard
         this.saveToLeaderboard();
-
-        // Show results with confetti
         this.showScreen('results');
         this.createConfetti();
     }
 
-    // ============================================
-    // NAVIGATION
-    // ============================================
-
     updateNavButtons() {
         const questions = GAME_DATA.questions[this.state.currentRoom];
-
-        // Back button
-        this.elements.backBtn.disabled =
-            this.state.currentQuestion === 0 && this.state.currentRoom === 1;
-
-        // Forward button (only enabled if current question is answered or it's a story)
+        this.elements.backBtn.disabled = this.state.currentQuestion === 0 && this.state.currentRoom === 1;
         const questionKey = `${this.state.currentRoom}-${this.state.currentQuestion}`;
         const currentQuestion = questions ? questions[this.state.currentQuestion] : null;
-        const isStory = currentQuestion && currentQuestion.type === 'story';
-
-        this.elements.forwardBtn.disabled =
-            (!this.state.questionsAnswered.includes(questionKey) && !isStory) || this.state.showingIntro;
-
-        // Hide hint for story scenes
-        this.elements.hintBtn.style.display = isStory ? 'none' : 'flex';
+        const isStoryOrReading = currentQuestion && (currentQuestion.type === 'story' || currentQuestion.type === 'reading');
+        this.elements.forwardBtn.disabled = (!this.state.questionsAnswered.includes(questionKey) && !isStoryOrReading) || this.state.showingIntro;
+        this.elements.hintBtn.style.display = isStoryOrReading ? 'none' : 'flex';
     }
 
     goBack() {
@@ -1077,11 +1071,6 @@ class EscapeRoomGame {
             this.showRoomIntro();
         } else if (this.state.currentQuestion > 0) {
             this.state.currentQuestion--;
-            this.renderQuestion();
-        } else if (this.state.currentRoom > 1) {
-            this.state.currentRoom--;
-            const questions = GAME_DATA.questions[this.state.currentRoom];
-            this.state.currentQuestion = questions.length - 1;
             this.renderQuestion();
         }
     }
@@ -1092,8 +1081,7 @@ class EscapeRoomGame {
         } else {
             const questions = GAME_DATA.questions[this.state.currentRoom];
             const currentQuestion = questions[this.state.currentQuestion];
-
-            if (currentQuestion && currentQuestion.type === 'story') {
+            if (currentQuestion && (currentQuestion.type === 'story' || currentQuestion.type === 'reading')) {
                 this.continueFromStory();
             } else {
                 this.nextQuestion();
@@ -1104,209 +1092,100 @@ class EscapeRoomGame {
     showHint() {
         const questions = GAME_DATA.questions[this.state.currentRoom];
         const question = questions[this.state.currentQuestion];
-
         if (question && question.hint) {
             this.elements.hintText.textContent = question.hint;
             this.elements.hintModal.classList.add('active');
         }
     }
 
-    hideHint() {
-        this.elements.hintModal.classList.remove('active');
-    }
+    hideHint() { this.elements.hintModal.classList.remove('active'); }
 
     handleKeyboard(e) {
         if (!this.state.isPlaying) return;
-
-        // A, B, C, D keys for options
         const keyMap = { 'a': 'A', 'b': 'B', 'c': 'C', 'd': 'D' };
         if (keyMap[e.key.toLowerCase()]) {
             const btn = document.querySelector(`.option-btn[data-letter="${keyMap[e.key.toLowerCase()]}"]`);
-            if (btn && !btn.disabled) {
-                btn.click();
-            }
+            if (btn && !btn.disabled) btn.click();
         }
-
-        // T and F for true/false
         if (e.key.toLowerCase() === 't') {
             const btn = document.querySelector('.option-btn.true-btn');
-            if (btn && !btn.disabled) {
-                btn.click();
-            }
+            if (btn && !btn.disabled) btn.click();
         }
         if (e.key.toLowerCase() === 'f') {
             const btn = document.querySelector('.option-btn.false-btn');
-            if (btn && !btn.disabled) {
-                btn.click();
-            }
+            if (btn && !btn.disabled) btn.click();
         }
-
-        // Arrow keys for navigation
-        if (e.key === 'ArrowLeft' && !this.elements.backBtn.disabled) {
-            this.goBack();
-        }
-        if (e.key === 'ArrowRight' && !this.elements.forwardBtn.disabled) {
-            this.goForward();
-        }
-
-        // Enter to continue from story
         if (e.key === 'Enter') {
             const continueBtn = document.querySelector('.continue-story-btn');
-            if (continueBtn) {
-                continueBtn.click();
-            }
-        }
-
-        // H for hint
-        if (e.key.toLowerCase() === 'h') {
-            this.showHint();
-        }
-
-        // Escape to close hint
-        if (e.key === 'Escape') {
-            this.hideHint();
+            if (continueBtn) continueBtn.click();
         }
     }
 
-    // ============================================
-    // LEADERBOARD & SAVE
-    // ============================================
-
     saveToLeaderboard() {
         let leaderboard = JSON.parse(localStorage.getItem('escapeRoomLeaderboard') || '[]');
-
         leaderboard.push({
             teamName: this.state.teamName,
             score: this.state.score,
             time: GAME_DATA.settings.totalTime - this.state.timeRemaining,
             date: new Date().toLocaleDateString()
         });
-
-        // Sort by score descending, then by time ascending
-        leaderboard.sort((a, b) => {
-            if (b.score !== a.score) return b.score - a.score;
-            return a.time - b.time;
-        });
-
-        // Keep only top 10
+        leaderboard.sort((a, b) => b.score !== a.score ? b.score - a.score : a.time - b.time);
         leaderboard = leaderboard.slice(0, 10);
-
         localStorage.setItem('escapeRoomLeaderboard', JSON.stringify(leaderboard));
     }
 
     showLeaderboard() {
         const leaderboard = JSON.parse(localStorage.getItem('escapeRoomLeaderboard') || '[]');
-
-        const html = leaderboard.map((entry, index) => {
-            let medalClass = '';
-            let rank = index + 1;
-            if (index === 0) medalClass = 'gold';
-            else if (index === 1) medalClass = 'silver';
-            else if (index === 2) medalClass = 'bronze';
-
-            const minutes = Math.floor(entry.time / 60);
-            const seconds = entry.time % 60;
-
+        this.elements.leaderboardList.innerHTML = leaderboard.map((entry, index) => {
+            let medalClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
             return `
                 <div class="leaderboard-entry ${medalClass}">
-                    <span class="leaderboard-rank">${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : rank}</span>
+                    <span class="leaderboard-rank">${index < 3 ? ['🥇','🥈','🥉'][index] : index + 1}</span>
                     <span class="leaderboard-name">${entry.teamName}</span>
                     <span class="leaderboard-score">${entry.score} pts</span>
                 </div>
             `;
-        }).join('');
-
-        this.elements.leaderboardList.innerHTML = html || '<p style="font-size: 1.5rem; color: #a0a0a0;">No entries yet!</p>';
+        }).join('') || '<p>No entries yet!</p>';
         this.showScreen('leaderboard');
     }
 
-    saveProgress() {
-        const progress = {
-            teamName: this.state.teamName,
-            currentRoom: this.state.currentRoom,
-            currentQuestion: this.state.currentQuestion,
-            score: this.state.score,
-            timeRemaining: this.state.timeRemaining,
-            attempts: this.state.attempts,
-            questionsAnswered: this.state.questionsAnswered,
-            correctAnswers: this.state.correctAnswers,
-            incorrectAnswers: this.state.incorrectAnswers,
-            firstTryCorrect: this.state.firstTryCorrect,
-            trueFalseCorrect: this.state.trueFalseCorrect,
-            roomScores: this.state.roomScores
-        };
-        localStorage.setItem('escapeRoomProgress', JSON.stringify(progress));
-    }
-
-    loadSavedData() {
-        // Check for saved progress
-        const saved = localStorage.getItem('escapeRoomProgress');
-        if (saved) {
-            // Could offer to resume - for now just clear it
-            // localStorage.removeItem('escapeRoomProgress');
-        }
-    }
+    loadSavedData() {}
 
     resetGame() {
         clearInterval(this.state.timerInterval);
+        clearInterval(this.state.wordNinjaTimer);
+        clearInterval(this.state.speedTypingTimer);
         this.state = {
-            teamName: 'Team Champions',
-            playerCount: 2,
-            currentRoom: 1,
-            currentQuestion: 0,
-            score: 0,
-            timeRemaining: GAME_DATA.settings.totalTime,
-            timerInterval: null,
-            attempts: {},
-            correctAnswers: 0,
-            incorrectAnswers: 0,
-            firstTryCorrect: 0,
-            trueFalseCorrect: 0,
-            roomScores: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
-            questionsAnswered: [],
-            isPlaying: false,
-            isPaused: false,
-            startTime: null,
-            showingIntro: false,
-            showingMiniGame: false
+            teamName: 'Team Champions', playerCount: 2, currentRoom: 1, currentQuestion: 0,
+            score: 0, timeRemaining: GAME_DATA.settings.totalTime, timerInterval: null,
+            attempts: {}, correctAnswers: 0, incorrectAnswers: 0, firstTryCorrect: 0,
+            trueFalseCorrect: 0, bonusGamesPlayed: 0, roomScores: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+            questionsAnswered: [], isPlaying: false, isPaused: false, startTime: null,
+            showingIntro: false, showingMiniGame: false, wordNinjaScore: 0, wordNinjaTimer: null,
+            ticTacToeBoard: Array(9).fill(null), ticTacToeQuestionIndex: 0,
+            speedTypingScore: 0, speedTypingTimer: null, speedTypingWordIndex: 0
         };
-
-        localStorage.removeItem('escapeRoomProgress');
         this.elements.confetti.innerHTML = '';
         this.showScreen('home');
     }
 
-    // ============================================
-    // CONFETTI ANIMATION
-    // ============================================
-
     createConfetti() {
         this.elements.confetti.innerHTML = '';
         const colors = ['#f39c12', '#e74c3c', '#9b59b6', '#3498db', '#2ecc71', '#1abc9c'];
-
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 80; i++) {
             setTimeout(() => {
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
                 confetti.style.left = Math.random() * 100 + '%';
                 confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
-                confetti.style.animationDelay = Math.random() * 0.5 + 's';
                 this.elements.confetti.appendChild(confetti);
-
-                setTimeout(() => {
-                    confetti.remove();
-                }, 5000);
+                setTimeout(() => confetti.remove(), 5000);
             }, i * 30);
         }
     }
 }
 
-// Initialize game when DOM is loaded
 let game;
-document.addEventListener('DOMContentLoaded', () => {
-    game = new EscapeRoomGame();
-});
-
-// Make game available globally for inline event handlers
+document.addEventListener('DOMContentLoaded', () => { game = new EscapeRoomGame(); });
 window.game = game;
