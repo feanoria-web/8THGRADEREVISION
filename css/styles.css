@@ -1315,6 +1315,453 @@ body {
     }
 }
 
+/* ============================================
+   STORY SCENES
+   ============================================ */
+.story-card {
+    background: linear-gradient(135deg, var(--card-bg), #1a2a4a);
+    border: 3px solid rgba(255, 215, 0, 0.3);
+}
+
+.story-container {
+    padding: 20px;
+}
+
+.story-title {
+    font-size: var(--font-size-large);
+    color: #ffd700;
+    margin-bottom: 25px;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.story-narrative {
+    font-size: var(--font-size-medium);
+    color: var(--text-light);
+    line-height: 1.8;
+    margin-bottom: 35px;
+    padding: 25px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--button-radius);
+    border-left: 4px solid #ffd700;
+}
+
+.story-character {
+    display: flex;
+    align-items: flex-start;
+    gap: 25px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: var(--border-radius);
+    text-align: left;
+}
+
+.story-character-icon {
+    font-size: 5rem;
+    flex-shrink: 0;
+    animation: characterBounce 2s ease-in-out infinite;
+}
+
+@keyframes characterBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.story-character-content {
+    flex: 1;
+}
+
+.story-character-name {
+    font-size: var(--font-size-medium);
+    color: var(--secondary-color);
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.story-character-dialogue {
+    font-size: var(--font-size-normal);
+    color: var(--text-light);
+    font-style: italic;
+    line-height: 1.6;
+}
+
+.continue-story-btn {
+    margin-top: 40px;
+    padding: 25px 60px;
+    font-size: var(--font-size-medium);
+    background: linear-gradient(135deg, #ffd700, #ffa500);
+    border: none;
+    border-radius: var(--button-radius);
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+    animation: pulse 2s infinite;
+}
+
+.continue-story-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+}
+
+/* ============================================
+   TRUE/FALSE QUESTIONS
+   ============================================ */
+.true-false-card {
+    border: 3px solid rgba(0, 206, 201, 0.3);
+}
+
+.true-false-badge {
+    display: inline-block;
+    padding: 15px 40px;
+    background: linear-gradient(135deg, var(--secondary-color), #00a99d);
+    border-radius: 50px;
+    font-size: var(--font-size-medium);
+    font-weight: bold;
+    margin-bottom: 30px;
+    animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0, 206, 201, 0.4); }
+    50% { box-shadow: 0 0 0 15px rgba(0, 206, 201, 0); }
+}
+
+.statement-box {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 40px;
+    border-radius: var(--border-radius);
+    margin: 30px 0;
+    border: 3px dashed rgba(255, 255, 255, 0.3);
+}
+
+.statement-text {
+    font-size: var(--font-size-large);
+    color: var(--text-light);
+    font-style: italic;
+}
+
+.true-false-options {
+    display: flex !important;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.true-false-options .option-btn {
+    min-width: 200px;
+    justify-content: center;
+    padding: 30px 50px;
+}
+
+.true-false-options .true-btn {
+    background: rgba(0, 184, 148, 0.2);
+    border: 3px solid var(--success-color);
+}
+
+.true-false-options .true-btn:hover:not(:disabled) {
+    background: rgba(0, 184, 148, 0.4);
+}
+
+.true-false-options .false-btn {
+    background: rgba(255, 118, 117, 0.2);
+    border: 3px solid var(--error-color);
+}
+
+.true-false-options .false-btn:hover:not(:disabled) {
+    background: rgba(255, 118, 117, 0.4);
+}
+
+.true-false-options .option-icon {
+    font-size: 2.5rem;
+    margin-right: 10px;
+}
+
+/* ============================================
+   FILL-IN-THE-BLANK QUESTIONS
+   ============================================ */
+.fill-blank-card {
+    border: 3px solid rgba(243, 156, 18, 0.3);
+}
+
+.context-box {
+    background: rgba(243, 156, 18, 0.1);
+    padding: 25px;
+    border-radius: var(--button-radius);
+    margin-bottom: 25px;
+    border-left: 4px solid var(--warning-color);
+}
+
+.context-text {
+    font-size: var(--font-size-normal);
+    color: var(--warning-color);
+}
+
+.sentence-box {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 40px;
+    border-radius: var(--border-radius);
+    margin: 30px 0;
+}
+
+.sentence-text {
+    font-size: var(--font-size-large);
+    color: var(--text-light);
+}
+
+/* ============================================
+   MINI-GAMES
+   ============================================ */
+.mini-game-card {
+    background: linear-gradient(135deg, #2d3436, #1e272e);
+    border: 4px solid var(--secondary-color);
+    border-radius: var(--border-radius);
+    padding: 50px;
+    max-width: 900px;
+    width: 100%;
+    text-align: center;
+    animation: slideIn 0.5s ease;
+}
+
+.mini-game-title {
+    font-size: var(--font-size-huge);
+    color: var(--secondary-color);
+    margin-bottom: 20px;
+}
+
+.mini-game-instruction {
+    font-size: var(--font-size-medium);
+    color: var(--text-muted);
+    margin-bottom: 40px;
+}
+
+.mini-game-hint {
+    font-size: var(--font-size-normal);
+    color: var(--warning-color);
+    margin: 20px 0;
+}
+
+.mini-game-submit {
+    padding: 20px 50px;
+    font-size: var(--font-size-medium);
+    background: linear-gradient(135deg, var(--success-color), #009688);
+    border: none;
+    border-radius: var(--button-radius);
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all var(--transition-speed);
+    margin: 20px 10px;
+}
+
+.mini-game-submit:hover {
+    transform: scale(1.05);
+}
+
+.mini-game-skip {
+    padding: 15px 40px;
+    font-size: var(--font-size-normal);
+    background: transparent;
+    border: 2px solid var(--text-muted);
+    border-radius: var(--button-radius);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--transition-speed);
+    margin: 20px 10px;
+}
+
+.mini-game-skip:hover {
+    border-color: var(--text-light);
+    color: var(--text-light);
+}
+
+/* Word Scramble Game */
+.scrambled-letters {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 30px 0;
+    flex-wrap: wrap;
+}
+
+.scramble-letter {
+    width: 70px;
+    height: 70px;
+    background: var(--primary-color);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-large);
+    font-weight: bold;
+    animation: letterBounce 0.5s ease backwards;
+}
+
+.scramble-letter:nth-child(1) { animation-delay: 0.1s; }
+.scramble-letter:nth-child(2) { animation-delay: 0.2s; }
+.scramble-letter:nth-child(3) { animation-delay: 0.3s; }
+.scramble-letter:nth-child(4) { animation-delay: 0.4s; }
+.scramble-letter:nth-child(5) { animation-delay: 0.5s; }
+.scramble-letter:nth-child(6) { animation-delay: 0.6s; }
+.scramble-letter:nth-child(7) { animation-delay: 0.7s; }
+
+@keyframes letterBounce {
+    0% { transform: scale(0) rotate(-180deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+.scramble-input {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px 30px;
+    font-size: var(--font-size-large);
+    text-align: center;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.1);
+    border: 3px solid var(--primary-color);
+    border-radius: var(--button-radius);
+    color: var(--text-light);
+    outline: none;
+    margin: 20px 0;
+}
+
+.scramble-input:focus {
+    border-color: var(--secondary-color);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Emoji Match Game */
+.emoji-match-container {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin: 30px 0;
+    flex-wrap: wrap;
+}
+
+.emoji-column, .word-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.emoji-item {
+    font-size: 4rem;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+}
+
+.word-item {
+    padding: 20px 40px;
+    font-size: var(--font-size-medium);
+    background: rgba(255, 255, 255, 0.1);
+    border: 3px solid transparent;
+    border-radius: var(--button-radius);
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+
+.word-item:hover:not(:disabled) {
+    border-color: var(--primary-color);
+    background: rgba(108, 92, 231, 0.3);
+}
+
+.word-item.selected {
+    border-color: var(--secondary-color);
+    background: rgba(0, 206, 201, 0.3);
+}
+
+.word-item.matched {
+    background: var(--success-color);
+    border-color: var(--success-color);
+}
+
+/* Quick Sort Game */
+.sort-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 30px 0;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.sort-item {
+    padding: 25px 40px;
+    font-size: var(--font-size-medium);
+    background: rgba(255, 255, 255, 0.1);
+    border: 3px solid transparent;
+    border-radius: var(--button-radius);
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all var(--transition-speed);
+    text-align: left;
+}
+
+.sort-item:hover:not(.selected) {
+    border-color: var(--primary-color);
+    background: rgba(108, 92, 231, 0.3);
+}
+
+.sort-item.selected {
+    background: var(--primary-color);
+    border-color: var(--primary-dark);
+    transform: scale(0.98);
+}
+
+.sort-answer {
+    margin: 20px 0;
+    font-size: var(--font-size-normal);
+    color: var(--text-muted);
+}
+
+#sort-order {
+    color: var(--secondary-color);
+    font-weight: bold;
+}
+
+/* ============================================
+   COMPARISON VS STYLING
+   ============================================ */
+.comparison-vs {
+    font-size: 3rem;
+    color: var(--warning-color);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+/* ============================================
+   RECIPE IMAGE STYLING
+   ============================================ */
+.recipe-image {
+    font-size: 3rem;
+    text-align: center;
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+/* ============================================
+   PHONE ACTION STYLING
+   ============================================ */
+.phone-action {
+    font-size: var(--font-size-normal);
+    font-style: italic;
+    margin-top: 15px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* ============================================
+   BONUS CARD STYLING
+   ============================================ */
+.bonus-card {
+    border: 3px solid rgba(255, 215, 0, 0.4);
+    background: linear-gradient(135deg, var(--card-bg), #2a1a4a);
+}
+
 /* Print styles for certificates */
 @media print {
     body {
