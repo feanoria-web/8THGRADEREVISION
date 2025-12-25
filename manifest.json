@@ -1,0 +1,23 @@
+{
+    "name": "National Escape Room Tournament - 8th Grade English",
+    "short_name": "Escape Room",
+    "description": "An interactive English revision game for 8th grade students featuring friendship, preferences, cooking vocabulary, and phone etiquette challenges.",
+    "start_url": "/index.html",
+    "display": "fullscreen",
+    "orientation": "landscape",
+    "background_color": "#1a1a2e",
+    "theme_color": "#6c5ce7",
+    "icons": [
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏆</text></svg>",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["education", "games"],
+    "lang": "en",
+    "dir": "ltr",
+    "scope": "/",
+    "prefer_related_applications": false
+}

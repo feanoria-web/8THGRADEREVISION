@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>🏆 National Escape Room Tournament - 8th Grade English</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏆</text></svg>">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="screen active">
+        <div class="loading-content">
+            <div class="trophy-spin">🏆</div>
+            <h1>Loading Escape Room...</h1>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Home Screen -->
+    <div id="home-screen" class="screen">
+        <div class="home-container">
+            <div class="logo-container">
+                <div class="logo-icon">🔐</div>
+                <h1 class="main-title">NATIONAL ESCAPE ROOM</h1>
+                <h2 class="sub-title">TOURNAMENT</h2>
+                <p class="edition">8th Grade English Revision Edition</p>
+            </div>
+
+            <div class="team-setup">
+                <h3>Enter Your Team Name</h3>
+                <input type="text" id="team-name-input" class="big-input" placeholder="Team Champions" maxlength="20">
+
+                <h3>Select Number of Players</h3>
+                <div class="player-buttons">
+                    <button class="player-btn" data-players="1">1 Player</button>
+                    <button class="player-btn selected" data-players="2">2 Players</button>
+                    <button class="player-btn" data-players="3">3 Players</button>
+                    <button class="player-btn" data-players="4">4 Players</button>
+                </div>
+            </div>
+
+            <button id="start-btn" class="big-button pulse">
+                <span class="btn-icon">🚀</span>
+                START CHALLENGE
+            </button>
+
+            <div class="home-footer">
+                <p>⏱️ 25 Minutes | 📚 4 Challenges | 🎯 Team Work</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instructions Screen -->
+    <div id="instructions-screen" class="screen">
+        <div class="instructions-container">
+            <h1>📋 HOW TO PLAY</h1>
+
+            <div class="instruction-cards">
+                <div class="instruction-card">
+                    <span class="instruction-icon">👥</span>
+                    <h3>WORK TOGETHER</h3>
+                    <p>Discuss answers with your team before selecting</p>
+                </div>
+                <div class="instruction-card">
+                    <span class="instruction-icon">🎯</span>
+                    <h3>CHOOSE WISELY</h3>
+                    <p>Select the best answer - you get more points for first tries!</p>
+                </div>
+                <div class="instruction-card">
+                    <span class="instruction-icon">⏱️</span>
+                    <h3>BEAT THE CLOCK</h3>
+                    <p>Complete all 4 rooms before time runs out</p>
+                </div>
+                <div class="instruction-card">
+                    <span class="instruction-icon">🏆</span>
+                    <h3>SCORE POINTS</h3>
+                    <p>First try = 10 pts | Second try = 5 pts</p>
+                </div>
+            </div>
+
+            <div class="room-preview">
+                <h2>Your Journey:</h2>
+                <div class="room-path">
+                    <div class="room-node">
+                        <span class="room-icon">🤝</span>
+                        <span class="room-name">Friendship</span>
+                    </div>
+                    <div class="path-arrow">➜</div>
+                    <div class="room-node">
+                        <span class="room-icon">🎵</span>
+                        <span class="room-name">Teen Life</span>
+                    </div>
+                    <div class="path-arrow">➜</div>
+                    <div class="room-node">
+                        <span class="room-icon">🍳</span>
+                        <span class="room-name">Kitchen</span>
+                    </div>
+                    <div class="path-arrow">➜</div>
+                    <div class="room-node">
+                        <span class="room-icon">📞</span>
+                        <span class="room-name">Phone</span>
+                    </div>
+                    <div class="path-arrow">➜</div>
+                    <div class="room-node final">
+                        <span class="room-icon">🚪</span>
+                        <span class="room-name">ESCAPE!</span>
+                    </div>
+                </div>
+            </div>
+
+            <button id="begin-btn" class="big-button">
+                <span class="btn-icon">🎮</span>
+                BEGIN TOURNAMENT
+            </button>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="team-info">
+                <span class="team-icon">👥</span>
+                <span id="display-team-name">Team Champions</span>
+            </div>
+            <div class="timer-display">
+                <span class="timer-icon">⏱️</span>
+                <span id="timer">25:00</span>
+            </div>
+            <div class="score-display">
+                <span class="score-icon">⭐</span>
+                <span id="score">0</span> pts
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
+            <div class="progress-rooms">
+                <div class="progress-room" data-room="1">🤝</div>
+                <div class="progress-room" data-room="2">🎵</div>
+                <div class="progress-room" data-room="3">🍳</div>
+                <div class="progress-room" data-room="4">📞</div>
+                <div class="progress-room" data-room="5">🚪</div>
+            </div>
+        </div>
+
+        <!-- Room Container -->
+        <div id="room-container" class="room-container">
+            <!-- Dynamic content loaded here -->
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="nav-buttons">
+            <button id="back-btn" class="nav-btn back-btn" disabled>
+                <span>◀</span> BACK
+            </button>
+            <button id="hint-btn" class="nav-btn hint-btn">
+                <span>💡</span> HINT
+            </button>
+            <button id="forward-btn" class="nav-btn forward-btn" disabled>
+                NEXT <span>▶</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Room Transition Screen -->
+    <div id="transition-screen" class="screen">
+        <div class="transition-content">
+            <div id="transition-icon" class="transition-icon">🔓</div>
+            <h1 id="transition-title">ROOM UNLOCKED!</h1>
+            <p id="transition-message">Moving to the next challenge...</p>
+            <div class="transition-progress">
+                <div class="transition-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="results-screen" class="screen">
+        <div class="results-container">
+            <div class="confetti-container" id="confetti"></div>
+
+            <div class="trophy-display">
+                <div id="medal-display" class="medal">🏆</div>
+                <h1>CONGRATULATIONS!</h1>
+                <h2 id="result-team-name">Team Champions</h2>
+            </div>
+
+            <div class="results-stats">
+                <div class="stat-card">
+                    <span class="stat-icon">⭐</span>
+                    <span class="stat-value" id="final-score">0</span>
+                    <span class="stat-label">Total Points</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">⏱️</span>
+                    <span class="stat-value" id="final-time">00:00</span>
+                    <span class="stat-label">Time Used</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">✅</span>
+                    <span class="stat-value" id="final-correct">0</span>
+                    <span class="stat-label">Correct Answers</span>
+                </div>
+            </div>
+
+            <div class="achievements">
+                <h3>🎖️ ACHIEVEMENTS UNLOCKED</h3>
+                <div id="achievements-list" class="achievements-list">
+                    <!-- Dynamic achievements -->
+                </div>
+            </div>
+
+            <div class="result-buttons">
+                <button id="play-again-btn" class="big-button">
+                    <span class="btn-icon">🔄</span>
+                    PLAY AGAIN
+                </button>
+                <button id="leaderboard-btn" class="big-button secondary">
+                    <span class="btn-icon">📊</span>
+                    LEADERBOARD
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Screen -->
+    <div id="leaderboard-screen" class="screen">
+        <div class="leaderboard-container">
+            <h1>📊 LEADERBOARD</h1>
+
+            <div id="leaderboard-list" class="leaderboard-list">
+                <!-- Dynamic leaderboard entries -->
+            </div>
+
+            <button id="back-home-btn" class="big-button">
+                <span class="btn-icon">🏠</span>
+                BACK TO HOME
+            </button>
+        </div>
+    </div>
+
+    <!-- Hint Modal -->
+    <div id="hint-modal" class="modal">
+        <div class="modal-content">
+            <h2>💡 HINT</h2>
+            <p id="hint-text">Think about what makes a good teammate!</p>
+            <button id="close-hint-btn" class="modal-btn">GOT IT!</button>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div id="feedback-modal" class="modal">
+        <div class="modal-content feedback-content">
+            <div id="feedback-icon" class="feedback-icon">✅</div>
+            <h2 id="feedback-title">Correct!</h2>
+            <p id="feedback-text">Great job!</p>
+            <div id="points-earned" class="points-earned">+10 pts</div>
+        </div>
+    </div>
+
+    <!-- Audio Elements (for optional sound effects) -->
+    <audio id="correct-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRl9vT19teleXggHcAQ==" type="audio/wav">
+    </audio>
+    <audio id="incorrect-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRl9vT19teleXggHcAQ==" type="audio/wav">
+    </audio>
+
+    <script src="js/questions.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        // Register service worker for offline capability
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker not registered', err));
+            });
+        }
+    </script>
+</body>
+</html>
