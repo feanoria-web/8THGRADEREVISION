@@ -1,6 +1,6 @@
 // ============================================
 // ESCAPE ROOM TOURNAMENT - ENHANCED QUESTION DATA
-// With reading passages, T/F, and fun bonus games!
+// With story-based reading passages, T/F, and fun bonus games!
 // ============================================
 
 const GAME_DATA = {
@@ -156,93 +156,118 @@ const GAME_DATA = {
             {
                 id: "1-0",
                 type: "story",
-                title: "Welcome!",
-                narrative: "You enter the Escape Room Championship. A host approaches with a clipboard.",
+                title: "Welcome to the Championship!",
+                narrative: "You push open the heavy doors and enter the grand lobby of the Escape Room Championship. Crystal chandeliers hang from the ceiling, and contestants from different schools are forming teams. A host in a golden suit approaches you with a clipboard.",
                 character: {
                     icon: "👋",
-                    name: "Host",
-                    dialogue: "Welcome! You must form your team of 4 members. Choose wisely - I'll introduce some candidates!"
+                    name: "The Host",
+                    dialogue: "Welcome, competitor! I'm Marcus, your host. Before you can enter the escape rooms, you must form a team of 4 members. Choose wisely - some candidates are... better than others. Let me introduce you to some interesting characters!"
                 },
                 continueText: "Meet the candidates →"
             },
-            // READING PASSAGE
+            // READING PASSAGE - Story-based
             {
                 id: "1-1",
                 type: "reading",
-                title: "📖 Read This Passage",
-                passage: "Making friends requires good social skills. When someone invites you to join their group, you can accept politely by saying 'I'd love to!' or 'That sounds great!' If you need to refuse, it's important to be kind. You might say 'Thanks for asking, but I'm not able to.' Always give a reason when refusing - it shows respect.",
-                continueText: "Answer questions about the passage →"
+                title: "📖 The Notice Board",
+                passage: "You walk over to the lobby's notice board where a sign reads: 'TEAM FORMATION RULES.' It says: 'To accept someone on your team, say something positive like \"I'd love to!\" or \"That sounds great!\" If you must refuse someone, be polite - say \"Thanks for asking, but...\" and give a reason. Remember: being kind costs nothing, but being rude could cost you the championship!'",
+                continueText: "Answer questions about the rules →"
             },
             {
                 id: "1-2",
                 type: "true-false",
-                statement: "According to the passage, you should give a reason when refusing an invitation.",
+                statement: "According to the notice board, you should give a reason when refusing someone.",
                 correctAnswer: true,
-                explanation: "The passage says 'Always give a reason when refusing - it shows respect.'",
-                hint: "Look at the last sentence of the passage."
+                explanation: "The sign says to give a reason when refusing!",
+                hint: "Look at what the notice board says about refusing."
             },
             {
                 id: "1-3",
                 type: "true-false",
-                statement: "'I'd love to!' is a polite way to accept an invitation.",
+                statement: "'I'd love to!' is a positive way to accept someone on your team.",
                 correctAnswer: true,
-                explanation: "The passage mentions 'I'd love to!' as a polite acceptance.",
-                hint: "Check what the passage says about accepting invitations."
+                explanation: "The notice board mentions this as a positive acceptance!",
+                hint: "What does the sign say about accepting?"
             },
             {
                 id: "1-4",
                 type: "character-select",
                 character: {
-                    name: "The Honest Helper",
+                    name: "The Genius Inventor",
                     icon: "🧠",
-                    description: "Brilliant problem-solver, always tells the truth, and helps everyone."
+                    description: "Emma is brilliant at solving puzzles and always tells the truth. She helped her school win last year's science fair."
                 },
-                question: "Why would you want the Honest Helper on your team?",
+                question: "The Genius Inventor wants to join your team. Why would she be a good choice?",
                 options: [
-                    { letter: "A", text: "Because I can count on her to help solve puzzles", correct: true },
-                    { letter: "B", text: "Because she likes pizza", correct: false }
+                    { letter: "A", text: "Because she's great at solving puzzles", correct: true },
+                    { letter: "B", text: "Because she has nice shoes", correct: false },
+                    { letter: "C", text: "Because she likes pizza", correct: false },
+                    { letter: "D", text: "Because she was born in June", correct: false }
                 ],
-                correctFeedback: "Her problem-solving skills are valuable!",
-                incorrectFeedback: "Look at what makes her special!",
-                hint: "Look at her description!"
+                correctFeedback: "Her puzzle-solving skills will help in escape rooms!",
+                incorrectFeedback: "Think about what skill would help in an escape room!",
+                hint: "What would help you ESCAPE a room?"
             },
             {
                 id: "1-5",
                 type: "fill-blank",
-                context: "Someone reliable offered to join your team.",
+                context: "The Genius Inventor offers to join your team.",
                 sentence: "I'd _____ to have you on our team!",
                 options: [
                     { letter: "A", text: "love", correct: true },
-                    { letter: "B", text: "hate", correct: false }
+                    { letter: "B", text: "hate", correct: false },
+                    { letter: "C", text: "forget", correct: false },
+                    { letter: "D", text: "refuse", correct: false }
                 ],
-                correctFeedback: "Enthusiastic acceptance!",
-                incorrectFeedback: "Use a positive word!",
-                hint: "'I'd _____ to!' is an excited yes."
+                correctFeedback: "Enthusiastic acceptance! Emma joins your team!",
+                incorrectFeedback: "Use a positive word to accept her!",
+                hint: "'I'd _____ to!' shows excitement."
             },
             {
                 id: "1-6",
                 type: "character-select",
                 character: {
-                    name: "The Lazy Complainer",
-                    icon: "😏",
-                    description: "Talented but unreliable, complains about everything."
+                    name: "The Angry Complainer",
+                    icon: "😤",
+                    description: "Tom is skilled but never stops complaining. He blamed his teammates when his last team lost and refuses to take responsibility."
                 },
-                question: "What's a polite way to refuse the Lazy Complainer?",
+                question: "The Angry Complainer wants to join. What's a polite way to refuse him?",
                 options: [
-                    { letter: "A", text: "Thanks, but we need someone more reliable.", correct: true },
-                    { letter: "B", text: "Go away! You're terrible!", correct: false }
+                    { letter: "A", text: "Thanks for asking, but we need someone who works well with others.", correct: true },
+                    { letter: "B", text: "Go away! Nobody wants you!", correct: false },
+                    { letter: "C", text: "You're the worst! Leave us alone!", correct: false },
+                    { letter: "D", text: "Ha! As if we'd pick you!", correct: false }
                 ],
-                correctFeedback: "Polite refusal with a reason!",
-                incorrectFeedback: "Be polite but honest!",
-                hint: "Start with 'Thanks' and give a kind reason."
+                correctFeedback: "Polite refusal with a reason - well done!",
+                incorrectFeedback: "Remember: be polite and give a reason!",
+                hint: "Start with 'Thanks' and explain kindly."
             },
             {
                 id: "1-7",
                 type: "true-false",
-                statement: "It's okay to refuse an invitation without giving any reason.",
+                statement: "It's okay to refuse someone without giving any reason.",
                 correctAnswer: false,
-                explanation: "Giving a reason shows respect for the other person.",
-                hint: "Is it polite to just say 'no' with no explanation?"
+                explanation: "The notice board says to always give a reason - it shows respect!",
+                hint: "What did the rules say about refusing?"
+            },
+            {
+                id: "1-8",
+                type: "character-select",
+                character: {
+                    name: "The Supportive Friend",
+                    icon: "💪",
+                    description: "Maya always encourages her teammates. When someone makes a mistake, she says 'Don't worry, let's try again together!'"
+                },
+                question: "The Supportive Friend approaches you. What should you say to accept her?",
+                options: [
+                    { letter: "A", text: "That sounds great! We'd love to have you!", correct: true },
+                    { letter: "B", text: "I guess you can join...", correct: false },
+                    { letter: "C", text: "Whatever, if you want.", correct: false },
+                    { letter: "D", text: "Fine, but don't mess up.", correct: false }
+                ],
+                correctFeedback: "Enthusiastic and positive! Maya joins happily!",
+                incorrectFeedback: "Show enthusiasm when accepting someone!",
+                hint: "How would YOU want to be welcomed?"
             }
         ],
 
@@ -254,77 +279,96 @@ const GAME_DATA = {
                 id: "2-0",
                 type: "story",
                 title: "The Rhythm Room",
-                narrative: "Colorful lights flash and music plays! A screen displays a message.",
+                narrative: "Your team enters a room filled with colorful lights and speakers. Music plays from different corners - rock, pop, classical, and electronic. A giant screen flickers to life with a message.",
                 character: {
                     icon: "🎧",
-                    name: "Room Voice",
-                    dialogue: "Express your preferences clearly! Tell us what you like and don't like!"
+                    name: "DJ Puzzler",
+                    dialogue: "Welcome to MY room! I'm DJ Puzzler. To unlock the exit, you must express your preferences clearly. Tell me what you like, what you prefer, and what you can't stand. Use the right grammar or stay trapped forever!"
                 },
                 continueText: "Start expressing yourself →"
             },
-            // READING PASSAGE
+            // READING PASSAGE - Story-based
             {
                 id: "2-1",
                 type: "reading",
-                title: "📖 Expressing Preferences",
-                passage: "There are many ways to talk about what you like. You can say 'I prefer jazz to pop' or 'I would rather stay home than go out.' To express dislike politely, try 'I'm not very keen on heavy metal' instead of 'I hate it!' Remember: 'prefer X to Y' and 'would rather X than Y' are the correct structures.",
+                title: "📖 The Music Manual",
+                passage: "You find a dusty manual on a speaker. It's titled 'DJ Puzzler's Guide to Preferences.' It reads: 'In my room, you must speak correctly! Say \"I prefer rock TO pop\" - never use \"than\" with prefer! Say \"I would rather dance THAN sit\" - use \"than\" with would rather! If you hate something, be polite: say \"I'm not very keen on...\" instead of \"I hate it!\" Now prove you can express yourself properly!'",
                 continueText: "Answer questions →"
             },
             {
                 id: "2-2",
                 type: "true-false",
-                statement: "The correct phrase is 'I prefer jazz TO pop' not 'I prefer jazz THAN pop'.",
+                statement: "According to DJ Puzzler's manual, 'I prefer rock TO pop' is correct.",
                 correctAnswer: true,
-                explanation: "With 'prefer', we always use 'to', not 'than'!",
-                hint: "Look at the passage - what preposition follows 'prefer'?"
+                explanation: "The manual says to use 'to' with 'prefer', not 'than'!",
+                hint: "What preposition does the manual say to use with 'prefer'?"
             },
             {
                 id: "2-3",
                 type: "true-false",
                 statement: "'I'm not very keen on' is a polite way to say you dislike something.",
                 correctAnswer: true,
-                explanation: "The passage says this is politer than saying 'I hate it!'",
+                explanation: "The manual says this is politer than saying 'I hate it!'",
                 hint: "Is this phrase gentle or harsh?"
             },
             {
                 id: "2-4",
                 type: "comparison",
                 comparison: {
-                    item1: { icon: "🏕️", label: "CAMPING" },
-                    item2: { icon: "🛍️", label: "SHOPPING" }
+                    item1: { icon: "🎸", label: "ROCK MUSIC" },
+                    item2: { icon: "🎹", label: "CLASSICAL" }
                 },
-                question: "Complete: 'I prefer camping ___ shopping.'",
+                question: "DJ Puzzler asks: Complete this sentence correctly: 'I prefer rock ___ classical.'",
                 options: [
                     { letter: "A", text: "to", correct: true },
-                    { letter: "B", text: "than", correct: false }
+                    { letter: "B", text: "than", correct: false },
+                    { letter: "C", text: "from", correct: false },
+                    { letter: "D", text: "over", correct: false }
                 ],
-                correctFeedback: "'Prefer X to Y' is correct!",
-                incorrectFeedback: "With 'prefer', use 'to' not 'than'!",
-                hint: "prefer + to (not than)"
+                correctFeedback: "'Prefer X to Y' - you got it!",
+                incorrectFeedback: "Remember the manual: 'prefer' + 'to'!",
+                hint: "The manual says: prefer X ___ Y"
             },
             {
                 id: "2-5",
                 type: "comparison",
                 comparison: {
-                    item1: { icon: "📱", label: "TEXTING" },
-                    item2: { icon: "📞", label: "CALLING" }
+                    item1: { icon: "💃", label: "DANCING" },
+                    item2: { icon: "🪑", label: "SITTING" }
                 },
-                question: "Which is correct?",
+                question: "Which sentence is grammatically CORRECT?",
                 options: [
-                    { letter: "A", text: "I would rather text than call.", correct: true },
-                    { letter: "B", text: "I would rather to text than call.", correct: false }
+                    { letter: "A", text: "I would rather dance than sit.", correct: true },
+                    { letter: "B", text: "I would rather to dance than sit.", correct: false },
+                    { letter: "C", text: "I would rather dance to sit.", correct: false },
+                    { letter: "D", text: "I would rather dancing than sitting.", correct: false }
                 ],
-                correctFeedback: "'Would rather + verb' is correct!",
-                incorrectFeedback: "No 'to' after 'would rather'!",
-                hint: "Would rather + base verb (no 'to')"
+                correctFeedback: "'Would rather + verb + than + verb' - perfect!",
+                incorrectFeedback: "No 'to' after 'would rather', and use 'than'!",
+                hint: "Would rather + BASE verb (no 'to'!)"
             },
             {
                 id: "2-6",
                 type: "true-false",
-                statement: "'I can't stand loud music' means I really like it.",
+                statement: "'I can't stand loud music' means you really LIKE loud music.",
                 correctAnswer: false,
                 explanation: "'Can't stand' means you REALLY dislike something!",
                 hint: "If you 'can't stand' something, is that positive or negative?"
+            },
+            {
+                id: "2-7",
+                type: "fill-blank",
+                context: "DJ Puzzler points to the electronic music corner.",
+                sentence: "I'm not very _____ on electronic music, actually.",
+                options: [
+                    { letter: "A", text: "keen", correct: true },
+                    { letter: "B", text: "loving", correct: false },
+                    { letter: "C", text: "happy", correct: false },
+                    { letter: "D", text: "excited", correct: false }
+                ],
+                correctFeedback: "'Not very keen on' is a polite way to express dislike!",
+                incorrectFeedback: "What phrase did the manual say?",
+                hint: "I'm not very _____ on = I don't really like"
             }
         ],
 
@@ -336,29 +380,29 @@ const GAME_DATA = {
                 id: "3-0",
                 type: "story",
                 title: "The Magical Kitchen",
-                narrative: "Pots stir themselves and vegetables float! A glowing cookbook speaks.",
+                narrative: "You enter a room that looks like an ancient kitchen. Pots bubble on their own, knives chop vegetables by themselves, and ingredients float through the air. A glowing cookbook on a stand suddenly speaks!",
                 character: {
                     icon: "📖",
-                    name: "Magic Cookbook",
-                    dialogue: "To earn the golden key, prove your kitchen knowledge!"
+                    name: "Chef Grimoire",
+                    dialogue: "I am Chef Grimoire, the magical cookbook! To earn the golden key, you must prove your knowledge of cooking vocabulary and recipe steps. Show me you can follow a recipe properly!"
                 },
                 continueText: "Open the cookbook →"
             },
-            // READING PASSAGE
+            // READING PASSAGE - Story-based
             {
                 id: "3-1",
                 type: "reading",
-                title: "📖 Cooking Vocabulary",
-                passage: "Cooking involves many actions. First, you might peel vegetables to remove their skin. Then you chop them into small pieces or slice them into thin flat pieces. To cook food in hot oil, you fry it. To cook in boiling water, you boil it. Butter will melt when heated. Always follow sequence words: First, Then, Next, Finally.",
+                title: "📖 The Secret Recipe Page",
+                passage: "A page glows in Chef Grimoire. It reads: 'COOKING ACTIONS: To PEEL means to remove the skin (like from a potato). To CHOP means to cut into small pieces. To SLICE means to cut into thin, flat pieces. To FRY means to cook in hot oil. To BOIL means to cook in hot water. To MELT means to turn solid into liquid with heat. RECIPE ORDER: Always use First, Then, Next, and Finally to show the steps!'",
                 continueText: "Answer questions →"
             },
             {
                 id: "3-2",
                 type: "true-false",
-                statement: "'Peel' means to remove the skin from vegetables.",
+                statement: "According to Chef Grimoire, 'peel' means to remove the skin.",
                 correctAnswer: true,
-                explanation: "The passage says 'peel vegetables to remove their skin.'",
-                hint: "What does the passage say about peeling?"
+                explanation: "The cookbook says 'PEEL means to remove the skin'!",
+                hint: "What does the recipe page say about peeling?"
             },
             {
                 id: "3-3",
@@ -366,29 +410,33 @@ const GAME_DATA = {
                 statement: "'Chop' and 'slice' mean exactly the same thing.",
                 correctAnswer: false,
                 explanation: "Chop = small pieces, Slice = thin flat pieces. They're different!",
-                hint: "Look at how the passage describes each word."
+                hint: "Look at how Chef Grimoire describes each word."
             },
             {
                 id: "3-4",
                 type: "recipe",
-                recipeStep: "_____ crack the eggs into a bowl",
-                question: "What sequence word starts a recipe?",
+                recipeStep: "_____, crack the eggs into a bowl.",
+                question: "Chef Grimoire asks: What word starts a recipe?",
                 options: [
                     { letter: "A", text: "First", correct: true },
-                    { letter: "B", text: "Finally", correct: false }
+                    { letter: "B", text: "Finally", correct: false },
+                    { letter: "C", text: "Last", correct: false },
+                    { letter: "D", text: "End", correct: false }
                 ],
-                correctFeedback: "Recipes start with 'First'!",
-                incorrectFeedback: "What means 'at the beginning'?",
+                correctFeedback: "Recipes always start with 'First'!",
+                incorrectFeedback: "What word means 'at the beginning'?",
                 hint: "The BEGINNING word is..."
             },
             {
                 id: "3-5",
                 type: "recipe",
-                recipeStep: "First, crack eggs. _____, add flour.",
-                question: "What comes after 'First'?",
+                recipeStep: "First, crack eggs. _____, add the flour.",
+                question: "What sequence word comes after 'First'?",
                 options: [
                     { letter: "A", text: "Then", correct: true },
-                    { letter: "B", text: "Finally", correct: false }
+                    { letter: "B", text: "Finally", correct: false },
+                    { letter: "C", text: "First", correct: false },
+                    { letter: "D", text: "Last", correct: false }
                 ],
                 correctFeedback: "First → Then → Next → Finally!",
                 incorrectFeedback: "What's the second step word?",
@@ -397,15 +445,17 @@ const GAME_DATA = {
             {
                 id: "3-6",
                 type: "recipe",
-                recipeStep: "_____ the butter in a pan",
+                recipeStep: "_____ the butter in a hot pan.",
                 displayImage: "🧈 + 🔥 = 💧",
-                question: "What happens to butter when heated?",
+                question: "Chef Grimoire shows you butter and fire. What happens to butter when heated?",
                 options: [
-                    { letter: "A", text: "melt", correct: true },
-                    { letter: "B", text: "chop", correct: false }
+                    { letter: "A", text: "Melt", correct: true },
+                    { letter: "B", text: "Chop", correct: false },
+                    { letter: "C", text: "Peel", correct: false },
+                    { letter: "D", text: "Slice", correct: false }
                 ],
-                correctFeedback: "Butter melts when heated!",
-                incorrectFeedback: "What happens to solid becoming liquid?",
+                correctFeedback: "Butter melts when heated! Solid → Liquid!",
+                incorrectFeedback: "What happens when solid becomes liquid?",
                 hint: "Ice cream in the sun does this too!"
             },
             {
@@ -415,6 +465,21 @@ const GAME_DATA = {
                 correctAnswer: true,
                 explanation: "'Finally' marks the end - the final step!",
                 hint: "Final = last"
+            },
+            {
+                id: "3-8",
+                type: "recipe",
+                recipeStep: "_____ the vegetables in hot oil until golden.",
+                question: "To cook vegetables in hot oil, you need to...",
+                options: [
+                    { letter: "A", text: "fry", correct: true },
+                    { letter: "B", text: "boil", correct: false },
+                    { letter: "C", text: "peel", correct: false },
+                    { letter: "D", text: "melt", correct: false }
+                ],
+                correctFeedback: "Fry = cook in hot oil! A golden key appears!",
+                incorrectFeedback: "Oil = frying, Water = boiling",
+                hint: "Cooking in OIL is called..."
             }
         ],
 
@@ -426,36 +491,36 @@ const GAME_DATA = {
                 id: "4-0",
                 type: "story",
                 title: "The Final Challenge",
-                narrative: "A massive steel door blocks your escape. An old telephone rings!",
+                narrative: "Your team reaches the final room. A massive steel door blocks your escape, and there's no visible lock. Suddenly, an old-fashioned telephone on a desk starts ringing loudly!",
                 character: {
                     icon: "📞",
-                    name: "Teammate",
-                    dialogue: "Answer the phone! Be polite or they might hang up!"
+                    name: "Your Teammate Maya",
+                    dialogue: "Quick! Answer the phone! I bet whoever is calling has the exit code. But be careful - if you're rude, they might hang up and we'll be trapped forever!"
                 },
                 continueText: "Answer the phone →"
             },
-            // READING PASSAGE
+            // READING PASSAGE - Story-based
             {
                 id: "4-1",
                 type: "reading",
-                title: "📖 Phone Etiquette",
-                passage: "Good phone manners are important. Answer with 'Hello, this is [name] speaking.' To ask for someone, say 'May I speak to...?' If the line is bad, politely say 'Could you speak up, please?' When asked to hold, say 'Of course.' Always end calls by saying 'Thank you' and 'Goodbye.'",
+                title: "📖 The Phone Manual",
+                passage: "You spot a phone manual on the desk. It says: 'PHONE ETIQUETTE FOR ESCAPE: Answer with \"Hello, this is [name] speaking.\" To ask for someone, say \"May I speak to...?\" If you can't hear, say \"Could you speak up, please?\" If asked to wait, say \"Of course\" or \"No problem.\" ALWAYS end with \"Thank you\" and \"Goodbye.\" Rude callers get disconnected!'",
                 continueText: "Answer questions →"
             },
             {
                 id: "4-2",
                 type: "true-false",
-                statement: "You should say who you are when answering the phone.",
+                statement: "The manual says you should say your name when answering the phone.",
                 correctAnswer: true,
-                explanation: "The passage says to answer with 'Hello, this is [name] speaking.'",
-                hint: "Look at how the passage says to answer."
+                explanation: "The manual says: 'Hello, this is [name] speaking.'",
+                hint: "Look at how the manual says to answer."
             },
             {
                 id: "4-3",
                 type: "true-false",
                 statement: "'May I speak to...' is a polite way to ask for someone.",
                 correctAnswer: true,
-                explanation: "The passage mentions this as the polite way to ask!",
+                explanation: "The manual mentions this as the polite way to ask!",
                 hint: "Is 'May I' polite?"
             },
             {
@@ -463,27 +528,31 @@ const GAME_DATA = {
                 type: "phone",
                 phoneDisplay: "📞 INCOMING CALL",
                 phoneAction: "Ring ring!",
-                question: "How should you answer?",
+                question: "The phone is ringing! How should you answer?",
                 options: [
                     { letter: "A", text: "Hello, this is the Escape Team speaking.", correct: true },
-                    { letter: "B", text: "Yeah, what?", correct: false }
+                    { letter: "B", text: "Yeah, what do you want?", correct: false },
+                    { letter: "C", text: "WHAT?!", correct: false },
+                    { letter: "D", text: "Who is this? Talk fast!", correct: false }
                 ],
-                correctFeedback: "Professional greeting!",
-                incorrectFeedback: "Be polite and say who you are!",
+                correctFeedback: "Professional and polite! The caller responds warmly.",
+                incorrectFeedback: "Remember the manual! Be polite and say who you are!",
                 hint: "Start with 'Hello' and introduce yourself."
             },
             {
                 id: "4-5",
                 type: "phone",
-                phoneDisplay: "📡 BAD LINE",
-                phoneAction: "*static noises*",
-                question: "The line is bad. What should you say?",
+                phoneDisplay: "📡 BAD CONNECTION",
+                phoneAction: "*static noises* ...the code is... *crackle*...",
+                question: "You can't hear clearly! What should you say?",
                 options: [
                     { letter: "A", text: "Could you speak up, please?", correct: true },
-                    { letter: "B", text: "WHAT?! SPEAK LOUDER!!", correct: false }
+                    { letter: "B", text: "WHAT?! SPEAK LOUDER!!", correct: false },
+                    { letter: "C", text: "This phone is terrible!", correct: false },
+                    { letter: "D", text: "I can't hear anything! Fix your phone!", correct: false }
                 ],
-                correctFeedback: "Polite problem-solving!",
-                incorrectFeedback: "Stay polite even with problems!",
+                correctFeedback: "Polite and effective! The caller speaks more clearly.",
+                incorrectFeedback: "Stay polite even when there are problems!",
                 hint: "Use 'Could you' + 'please'"
             },
             {
@@ -497,16 +566,34 @@ const GAME_DATA = {
             {
                 id: "4-7",
                 type: "phone",
-                phoneDisplay: "🔢 ENTER CODE",
-                phoneAction: "Code: 4-7-2-9",
-                question: "What's the FIRST digit of the code?",
+                phoneDisplay: "🗣️ CALLER SPEAKING",
+                phoneAction: "'Please hold for a moment...'",
+                question: "The caller asks you to wait. What do you say?",
                 options: [
-                    { letter: "A", text: "4", correct: true },
-                    { letter: "B", text: "7", correct: false }
+                    { letter: "A", text: "Of course, no problem.", correct: true },
+                    { letter: "B", text: "Hurry up! We don't have time!", correct: false },
+                    { letter: "C", text: "Ugh, fine...", correct: false },
+                    { letter: "D", text: "*heavy sigh* Whatever.", correct: false }
                 ],
-                correctFeedback: "First digit correct!",
-                incorrectFeedback: "The code is 4-7-2-9. First is...",
-                hint: "4-7-2-9 → First number?"
+                correctFeedback: "Patient and polite! The caller appreciates it.",
+                incorrectFeedback: "Show patience when asked to wait!",
+                hint: "What does the manual say about waiting?"
+            },
+            {
+                id: "4-8",
+                type: "phone",
+                phoneDisplay: "🔢 CODE REVEALED",
+                phoneAction: "'The exit code is 4-7-2-9. Good luck!'",
+                question: "The caller gives you the code! What do you say before hanging up?",
+                options: [
+                    { letter: "A", text: "Thank you so much! Goodbye!", correct: true },
+                    { letter: "B", text: "*click* (hang up immediately)", correct: false },
+                    { letter: "C", text: "Finally! Took you long enough!", correct: false },
+                    { letter: "D", text: "Yeah, bye.", correct: false }
+                ],
+                correctFeedback: "Perfect phone etiquette! The door unlocks!",
+                incorrectFeedback: "Remember: Always thank them and say goodbye!",
+                hint: "What TWO things should you say before ending a call?"
             }
         ],
 
@@ -517,12 +604,12 @@ const GAME_DATA = {
             {
                 id: "5-0",
                 type: "story",
-                title: "Bonus Round!",
-                narrative: "Congratulations! You've escaped! Now play 3 fun games for bonus points!",
+                title: "Victory! Bonus Round!",
+                narrative: "The massive door swings open and confetti falls from the ceiling! Your team has escaped! But wait - a new door appears with a glowing sign: 'BONUS GAMES - Extra Points Available!'",
                 character: {
                     icon: "🎮",
                     name: "Game Master",
-                    dialogue: "Ready for Word Ninja, Phone Tic-Tac-Toe, and Speed Speller?"
+                    dialogue: "Congratulations, champions! You've proven yourselves worthy. Would you like to play 3 fun bonus games for extra points? We have Word Ninja, Phone Tic-Tac-Toe, and Speed Speller!"
                 },
                 continueText: "Let's play! →"
             },
@@ -551,28 +638,28 @@ const GAME_DATA = {
             name: "Team Builder",
             description: "Assembled the perfect squad",
             icon: "🤝",
-            condition: (stats) => stats.unit1Correct >= 4
+            condition: (stats) => stats.unit1Correct >= 5
         },
         {
             id: "music_master",
             name: "Music Master",
             description: "Expressed preferences clearly",
             icon: "🎵",
-            condition: (stats) => stats.unit2Correct >= 4
+            condition: (stats) => stats.unit2Correct >= 5
         },
         {
             id: "chef_expert",
             name: "Chef Expert",
             description: "Mastered kitchen vocabulary",
             icon: "🍳",
-            condition: (stats) => stats.unit3Correct >= 5
+            condition: (stats) => stats.unit3Correct >= 6
         },
         {
             id: "phone_pro",
             name: "Phone Professional",
             description: "Used excellent phone etiquette",
             icon: "📞",
-            condition: (stats) => stats.unit4Correct >= 5
+            condition: (stats) => stats.unit4Correct >= 6
         },
         {
             id: "speed_demon",
